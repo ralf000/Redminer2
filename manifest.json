@@ -1,0 +1,31 @@
+{
+    "name": "Redminer2",
+    "description": "Автоматизатор создания задач",
+    "version": "1",
+    "content_scripts": [{
+            "matches": [
+                "https://redmine.itopcase.ru/*/*",
+                "https://outlook.office.com/*/*",
+                "https://outlook.office365.com/*/*",
+                "https://sm.mos.ru/*/*"
+                ],
+            "js": ["jquery.min.js"],
+            "css": ["style.css"]
+        }],
+    "permissions": [
+        "storage",
+        "https://redmine.itopcase.ru/*/*",
+        "https://outlook.office.com/*/*",
+        "https://outlook.office365.com/*/*",
+        "https://sm.mos.ru/*/*"
+        ],
+    "browser_action": {
+        "default_title": "Redminer2",
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["jquery.min.js", "background.js"]
+    }
+}
