@@ -1,39 +1,23 @@
-/**
- * переводит первый символ в верхний регистр
- * @param string
- * @returns {string}
- */
-function ucFirst(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function getHPSMForm() {
-    try {
-        var frame = parent.frames[0].frames[1].document;
-    } catch (e) {
-        var frame = parent.frames[1].frames[1].document;
-    }
-
-    var form = frame.getElementById('topaz');
-    return (form) ? $(form) : false;
-}
-
 function parseTaskFromHPSM() {
-    var form = getHPSMForm();
+    var form = getActiveFormByHPSM();//lib.js
     if (!form) return false;
 
     var taskId = form.find('[ref="instance/incident.id"] span').text();
+    if (!taskId)
+        taskId = form.find('span[ref="instance/number"]').children('span').text();
 
     var title = form.find('input[name="instance/title"]').val();
     if (!title) {
-        alert('Заголовок не обнаружен');
-        return false;
+        title = form.find('input[name="instance/brief.description"]').val();
     }
     title = ucFirst(title);
 
     var body = form.find('textarea[name="instance/description/description"]').text();
     if (!body)
-        return true;
+        body = form.find('textarea[name="instance/action/action"]').text();
+
+    if (!taskId || !title || !body)
+        return false;
 
     var message = {
         taskId: taskId ? taskId : '',
@@ -137,15 +121,17 @@ function setRedmineTaskId() {
     chrome.storage.local.get('redmineUrl', function (result) {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
-            var form = getHPSMForm();
+            var form = getActiveFormByHPSM();
             form.find('input[name="instance/hpc.additional.field.2"]').val(redmineUrl);
-            var panel = parent.frames[0].document.getElementById('center-panel');
-            if (!panel)
-                var panel = parent.frames[1].document.getElementById('center-panel');
             clean();
 
-            panel = $(panel);
-            panel.find('button:contains("Сохранить")').click();
+            var w = getActiveWindowByHPSM();
+            if (!w)
+                throw new Error('Не удалось получить текущее окно');
+            var btn = w.find('button:contains("Сохранить")');
+            if (!btn)
+                throw new Error('Не удалось получить кнопку "Сохранить"');
+            btn.click();
         }
     });
 }
@@ -160,7 +146,11 @@ function checkRedmineUrlTask() {
 chrome.extension.onMessage.addListener(
     function (request, sender, send_response) {
         if (request.action === "editHPSMTask" && location.host.indexOf('sm.mos') > -1) {
-            setRedmineTaskId();
+            try {
+                setRedmineTaskId();
+            } catch (e) {
+                console.log('Ошибка ' + e.name + ":" + e.message + "\n" + e.stack);
+            }
         }
     });
 
