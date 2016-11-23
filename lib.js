@@ -8,7 +8,10 @@ function ucFirst(string) {
 }
 
 function getActiveTabIdByHPSM() {
-    var id = $('ul.x-tab-strip-top li.x-tab-strip-active').attr('id');
+    var tabActive = $('ul.x-tab-strip-top li.x-tab-strip-active');
+    if (tabActive.length === 0)
+        return false;
+    var id = tabActive.attr('id');
     id = id.split('__');
     return id[id.length-1];
 }
