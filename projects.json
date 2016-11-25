@@ -1,14 +1,52 @@
 {
-    "ais": {
-        "name": "АИС Детский отдых",
-        "link": "aisdo"
-    },
-    "eiip": {
-        "name": "АИС УИД 2016/17",
-        "link": "uid2016"
-    },
-    "noproject": {
-        "name": "Внепроектная деятельность",
-        "link": "noproject"
-    }
+  "uid2016": {
+    "name": "АИС УИД 2016/17",
+    "link": "uid2016",
+    "btn": "btn-primary"
+  },
+  "ksp": {
+    "name": "КСП",
+    "link": "ksp",
+    "btn": "btn-primary"
+  },
+  "iasksp": {
+    "name": "Поддержка ИАС КСП-М",
+    "link": "iasksp",
+    "btn": "btn-primary"
+  },
+  "2016_esz_uptime24": {
+    "name": "2016 ЕСЗ Техподдержка",
+    "link": "2016_esz_uptime24",
+    "btn": "btn-primary"
+  },
+  "aisdo": {
+    "name": "АИС Детский отдых",
+    "link": "aisdo",
+    "btn": "btn-primary"
+  },
+  "aisdo_start": {
+    "name": "Внедрение и эксплуатация",
+    "link": "aisdo_start",
+    "btn": "btn-primary"
+  },
+  "erp": {
+    "name": "ERP Мосготур",
+    "link": "erp",
+    "btn": "btn-success"
+  },
+  "poekhalideti": {
+    "name": "Поехали дети",
+    "link": "poekhalideti",
+    "btn": "btn-success"
+  },
+  "mosgortur": {
+    "name": "Сайт Мосгортура",
+    "link": "mosgortur",
+    "btn": "btn-success"
+  },
+  "noproject": {
+    "name": "Внепроектная деятельность",
+    "link": "noproject",
+    "btn": "btn-default"
+  }
 }

@@ -8,7 +8,7 @@ function init() {
     $.getJSON(url, function (data, status, jqXHR) {
         if (status === 'success') {
             for (var key in data) {
-                btn = block.append('<button class="btn btn-default btn-block" id="' + data[key].link + '">' + data[key].name + '</button>');
+                btn = block.append('<button class="btn btn-block ' + data[key].btn + '" id="' + data[key].link + '">' + data[key].name + '</button>');
             }
             for (key in data) {
                 $('#' + data[key].link).on('click', function () {
