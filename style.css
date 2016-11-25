@@ -1,58 +1,14 @@
-
-
 .container{
     width: 300px;
 }
 
-#hint{
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    color: white;
-    font-size: 18px;
-    background: #2F1200;
-    text-align: center;
-    padding: 10px;
-    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.9);
-    text-shadow: -1px 0px black, 0px -1px black, 1px 0px black, 0px 1px black, -1px -1px black, 1px 1px black, -1px 1px black, 1px -1px black;
-    padding: 10px;
-}
-#create{margin-bottom: 5px;}
 #projects{
-    display: none;
+    display: block;
     border: 1px solid #D6D6D6;
     margin-bottom: 5px;
     background: #E6FDFF;
     padding: 10px;
     border-radius: 5px;
-}
-
-/* header/copyright link */
-.link {
-    text-decoration: none;
-    color: #55acee;
-    border-bottom: 2px dotted #55acee;
-    transition: .3s;
-    -webkit-transition: .3s;
-    -moz-transition: .3s;
-    -o-transition: .3s;
-    cursor: url(http://cur.cursors-4u.net/symbols/sym-1/sym46.cur), auto;
-}
-
-.link:hover {
-    color: #2ecc71;
-    border-bottom: 2px dotted #2ecc71;
-}
-
-/* button div */
-/*#buttons {
-    padding-top: 50px;
-    text-align: center;
-}*/
-
-#box1, #box2{
-    display: block;
-    margin: 5px 0px;
 }
 
 .block {
@@ -63,130 +19,7 @@
     margin-bottom: 10px;
 }
 
-/* start da css for da buttons */
-/*.btn {
-    border-radius: 5px;
-    padding: 5px;
+.title{
     font-size: 14px;
-    text-decoration: none;
-    margin: 5px;
-    color: #fff;
-    position: relative;
-    display: inline-block;
-    width: 180px;
-    height: 50px;
+    margin-bottom: 5px;
 }
-
-.btn:active {
-    transform: translate(0px, 5px);
-    -webkit-transform: translate(0px, 5px);
-    box-shadow: 0px 1px 0px 0px;
-}
-
-.blue {
-    background-color: #55acee;
-    box-shadow: 0px 5px 0px 0px #3C93D5;
-}
-
-.blue:hover {
-    background-color: #6FC6FF;
-}
-
-.green {
-    background-color: #2ecc71;
-    box-shadow: 0px 5px 0px 0px #15B358;
-}
-
-.green:hover {
-    background-color: #48E68B;
-}
-
-.red {
-    background-color: #e74c3c;
-    box-shadow: 0px 5px 0px 0px #CE3323;
-}
-
-.red:hover {
-    background-color: #FF6656;
-}
-
-.purple {
-    background-color: #9b59b6;
-    box-shadow: 0px 5px 0px 0px #82409D;
-}
-
-.purple:hover {
-    background-color: #B573D0;
-}
-
-.orange {
-    background-color: #e67e22;
-    box-shadow: 0px 5px 0px 0px #CD6509;
-}
-
-.orange:hover {
-    background-color: #FF983C;
-}
-
-.yellow {
-    background-color: #f1c40f;
-    box-shadow: 0px 5px 0px 0px #D8AB00;
-}
-
-.yellow:hover {
-    background-color: #FFDE29;
-}*/
-
-
-
-
-.onoffswitch {
-    position: relative; width: 170px;
-    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
-    box-shadow: 0px 4px 0px 0px #717171;
-    border-radius: 5px;
-}
-.onoffswitch-checkbox {
-    display: none;
-}
-.onoffswitch-label {
-    display: block; overflow: hidden; cursor: pointer;
-    border: 2px solid #999999; border-radius: 0px;
-}
-.onoffswitch-inner {
-    display: block; width: 200%; margin-left: -100%;
-    transition: margin 0.05s ease-in 0s;
-}
-.onoffswitch-inner:before, .onoffswitch-inner:after {
-    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 26px;
-    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
-    box-sizing: border-box;
-    border: 2px solid transparent;
-    background-clip: padding-box;
-}
-.onoffswitch-inner:before {
-    content: "Включено";
-    padding-left: 10px;
-    background-color: #2BB800; color: #FFFFFF;
-}
-.onoffswitch-inner:after {
-    content: "Выключено";
-    padding-right: 10px;
-    background-color: #CCCCCC; color: #333333;
-    text-align: right;
-}
-.onoffswitch-switch {
-    display: block; width: 23px; margin: 0px;
-    background: #595757;
-    position: absolute; top: 0; bottom: 0;
-    right: 147px;
-    transition: all 0.05s ease-in 0s; 
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
-    margin-left: 0;
-}
-.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-    right: 0px; 
-}
-.check{padding: 10px;}
-.title{font-size: 14px; margin-bottom: 5px; }

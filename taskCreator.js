@@ -46,20 +46,10 @@ function getTaskData() {
     chrome.storage.local.get('message', function (result) {
         var message = result.message;
         if (message.title) {
-            getSurname(message);
-        }
-    });
-}
-
-/**
- * получает фамилию для создания задачи
- * @param message object
- */
-function getSurname(message) {
-    chrome.storage.local.get('surname', function (result) {
-        var surname = result.surname;
-        if (surname) {
-            createTask(message, surname);
+            // getSurname(message);
+            createTask(message);
+        } else {
+            throw new Error('Отсутствует заголовок для создаваемой задачи');
         }
     });
 }
@@ -67,14 +57,13 @@ function getSurname(message) {
 /**
  * Заполняет поля и создает новую задачу в redmine
  * @param message object
- * @param surname string
  */
-function createTask(message, surname) {
+function createTask(message) {
     $('select#issue_tracker_id option:contains("Поддержка")').attr('selected', 'selected').change().click();
     $('input#issue_subject').val(message.title);
     $('textarea#issue_description').val(message.body);
     $('input#issue_estimated_hours').val(1);
-    $('select#issue_assigned_to_id option:contains("' + surname + '")').attr('selected', 'selected');
+    $('select#issue_assigned_to_id option:contains("<< мне >>")').attr('selected', 'selected');
 
     $('#attributes').append('<div class="splitcontent">\n\
             <div class="splitcontentleft">\n\

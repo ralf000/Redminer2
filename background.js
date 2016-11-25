@@ -15,6 +15,7 @@ function getFirstTabId() {
         var firstTab = result.firstTab;
         if (firstTab) {
             chrome.tabs.get(firstTab, function (tab) {
+                //если нужно перейти во вкладку то highlight
                 // chrome.tabs.highlight({'tabs': tab.index}, function() {
                 //     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
                 chrome.tabs.sendMessage(tab.id, {action: "editHPSMTask"}, function (response) {
