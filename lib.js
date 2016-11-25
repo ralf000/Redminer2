@@ -14,7 +14,7 @@ function ucFirst(string) {
 function getActiveTabIdByHPSM() {
     var tabActive = $('ul.x-tab-strip-top li.x-tab-strip-active');
     if (tabActive.length === 0)
-        return false;
+        return null;
     var id = tabActive.attr('id');
     id = id.split('__');
     return id[id.length-1];
@@ -26,7 +26,7 @@ function getActiveTabIdByHPSM() {
  */
 function getActiveWindowByHPSM() {
     var tabId = getActiveTabIdByHPSM();
-    return (tabId) ? $('.x-tab-panel-bwrap').find('#'+tabId) : false;
+    return (tabId.length > 0) ? $('.x-tab-panel-bwrap').find('#'+tabId) : $('.x-tab-panel-bwrap');
 }
 
 /**
