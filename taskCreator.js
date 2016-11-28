@@ -54,6 +54,16 @@ function getTaskData() {
     });
 }
 
+function getNotSaveVar(callback) {
+    chrome.storage.local.get('notSave', function (result) {
+        var notSave = result.notSave;
+        if (notSave === 'off') {
+            chrome.storage.local.remove('notSave');
+            callback();
+        }
+    });
+}
+
 /**
  * Заполняет поля и создает новую задачу в redmine
  * @param message object
@@ -75,14 +85,18 @@ function createTask(message) {
     chrome.storage.local.remove('message');
 
     //если таск из hpsm, то переменная firstTab не пустая
-    chrome.storage.local.get('firstTab', function (result) {
+    chrome.storage.sync.get('firstTab', function (result) {
         var firstTab = result.firstTab;
         if (firstTab) {
             chrome.extension.sendMessage({getRedmineTaskId: "on"});
         } else {
             clean();
         }
-        $('input[type=submit]')[0].click();
+        //если переменная notSave в true то сохранять таск не нужно
+        getNotSaveVar(function () {
+            $('input[type=submit]')[0].click();
+        });
+
     });
 
 }
@@ -104,6 +118,7 @@ function clean() {
     chrome.storage.local.remove('project');
     chrome.storage.local.remove('redmineTab');
     chrome.storage.local.remove('redmineUrl');
+    chrome.storage.sync.remove('notSave');
 }
 
 function setRedmineTaskId() {

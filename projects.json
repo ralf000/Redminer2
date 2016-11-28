@@ -2,7 +2,7 @@
   "uid2016": {
     "name": "АИС УИД 2016/17",
     "link": "uid2016",
-    "btn": "btn-primary"
+    "btn": "btn-danger"
   },
   "ksp": {
     "name": "КСП",
