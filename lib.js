@@ -26,7 +26,7 @@ function getActiveTabIdByHPSM() {
  */
 function getActiveWindowByHPSM() {
     var tabId = getActiveTabIdByHPSM();
-    return (tabId.length > 0) ? $('.x-tab-panel-bwrap').find('#'+tabId) : $('.x-tab-panel-bwrap');
+    return (tabId && tabId.length > 0) ? $('.x-tab-panel-bwrap').find('#'+tabId) : $('.x-tab-panel-bwrap');
 }
 
 /**
