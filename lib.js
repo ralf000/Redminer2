@@ -44,5 +44,7 @@ function getActiveFrameByHPSM() {
  */
 function getActiveFormByHPSM() {
     var frame = getActiveFrameByHPSM();
-    return (frame) ? frame.find('form#topaz') : false;
+    return (frame.find('form#topaz').length > 0)
+        ? frame.find('form#topaz')
+        : frame.contents().find('iframe.ux-mif').contents().find('form#topaz');
 }
