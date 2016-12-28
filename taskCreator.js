@@ -16,6 +16,7 @@ function parseTaskFromHPSM() {
     if (!body)
         body = form.find('textarea[name="instance/action/action"]').text();
 
+    console.log(form);
     if (!taskId || !title || !body)
         return false;
 
