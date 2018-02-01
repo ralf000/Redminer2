@@ -14,7 +14,7 @@ function init() {
                     + data[key].name +
                     '</button>' +
                     '<span class="input-group-btn">' +
-                    '<button class="btn btn-default ' + data[key].link + ' not-save" type="button" id="' + data[key].link + '"><span class="glyphicon glyphicon-remove"></span></button>' +
+                    '<button class="btn btn-default ' + data[key].link + ' not-save" type="button" id="' + data[key].link + '">X</button>' +
                     '</span>' +
                     '</div>'
                 );
@@ -22,11 +22,11 @@ function init() {
             for (key in data) {
                 $('.' + data[key].link).on('click', function () {
                     if ($(this).hasClass('not-save'))
-                        chrome.storage.local.set({notSave: 'on'});
+                        chrome.storage.sync.set({notSave: 'on'});
                     else
-                        chrome.storage.local.set({notSave: 'off'});
+                        chrome.storage.sync.set({notSave: 'off'});
 
-                    chrome.storage.local.set({project: $(this).attr('id')});
+                    chrome.storage.sync.set({project: $(this).attr('id')});
                     chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
                 });
             }
@@ -35,11 +35,12 @@ function init() {
 }
 
 function saveCurrentTab() {
-        chrome.tabs.getSelected(null, function (tab) {
-            if (tab.url.indexOf('sm.mos') === -1)
+        chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
+            var activeTab = arrayOfTabs[0];
+            if (activeTab.url.indexOf('sm.mos') === -1)
                 return false;
-            tab = tab.id;
-            chrome.storage.local.set({firstTab: tab});
+            var activeTabId = activeTab.id;
+            chrome.storage.sync.set({firstTab: activeTabId});
         });
 }
 

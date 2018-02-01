@@ -43,10 +43,9 @@ function parseTaskFromOutlook() {
  * Получает объект с данными задачи, проверяет установлен ли заголовок
  */
 function getTaskData() {
-    chrome.storage.local.get('message', function (result) {
+    chrome.storage.sync.get('message', function (result) {
         var message = result.message;
         if (message.title) {
-            // getSurname(message);
             createTask(message);
         } else {
             throw new Error('Отсутствует заголовок для создаваемой задачи');
@@ -55,10 +54,10 @@ function getTaskData() {
 }
 
 function getNotSaveVar(callback) {
-    chrome.storage.local.get('notSave', function (result) {
+    chrome.storage.sync.get('notSave', function (result) {
         var notSave = result.notSave;
         if (notSave === 'off') {
-            chrome.storage.local.remove('notSave');
+            chrome.storage.sync.remove('notSave');
             callback();
         }
     });
@@ -82,7 +81,7 @@ function createTask(message) {
             </div>\n\
             </div>');
     $('input#issue_custom_field_values_11').val(message.taskId ? message.taskId : '');
-    chrome.storage.local.remove('message');
+    chrome.storage.sync.remove('message');
 
     //если таск из hpsm, то переменная firstTab не пустая
     chrome.storage.sync.get('firstTab', function (result) {
@@ -109,20 +108,20 @@ function parseAndSend(callback) {
     var msg = callback();
     if (!msg)
         return false;
-    chrome.storage.local.set({message: msg});
+    chrome.storage.sync.set({message: msg});
     chrome.extension.sendMessage({create: "on"});
 }
 
 function clean() {
-    chrome.storage.local.remove('firstTab');
-    chrome.storage.local.remove('project');
-    chrome.storage.local.remove('redmineTab');
-    chrome.storage.local.remove('redmineUrl');
+    chrome.storage.sync.remove('firstTab');
+    chrome.storage.sync.remove('project');
+    chrome.storage.sync.remove('redmineTab');
+    chrome.storage.sync.remove('redmineUrl');
     chrome.storage.sync.remove('notSave');
 }
 
 function setRedmineTaskId() {
-    chrome.storage.local.get('redmineUrl', function (result) {
+    chrome.storage.sync.get('redmineUrl', function (result) {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
             var form = getActiveFormByHPSM();
@@ -166,7 +165,7 @@ if (location.host.indexOf('outlook') > -1) {
 } else if (location.host.indexOf('redmine') > -1) {
     if (checkRedmineUrlTask()) {
         //сохраняем ссылку на задачу в redmine
-        chrome.storage.local.set({redmineUrl: location.href});
+        chrome.storage.sync.set({redmineUrl: location.href});
         //можно переходить обратно в hpsm
         chrome.extension.sendMessage({return: "on"});
     } else {

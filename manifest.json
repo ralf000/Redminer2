@@ -10,7 +10,8 @@
                 "https://sm.mos.ru/*/*"
                 ],
             "js": ["jquery.min.js", "lib.js"],
-            "css": ["style.css"]
+            "css": ["style.css"],
+            "run_at": "document_start"
         }],
     "permissions": [
         "storage",
@@ -26,6 +27,6 @@
     },
     "manifest_version": 2,
     "background": {
-        "scripts": ["jquery.min.js", "background.js", "lib.js"]
+        "scripts": ["background.js", "lib.js"]
     }
 }

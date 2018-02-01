@@ -2,7 +2,7 @@
  * Получает объект с данными задачи, проверяет установлен ли заголовок
  */
 function getTaskData() {
-    chrome.storage.local.get('message', function (result) {
+    chrome.storage.sync.get('message', function (result) {
         var message = result.message;
         if (message.title) {
             getProjectId();
@@ -11,32 +11,27 @@ function getTaskData() {
 }
 
 function getFirstTabId() {
-    chrome.storage.local.get('firstTab', function (result) {
+    chrome.storage.sync.get('firstTab', function (result) {
         var firstTab = result.firstTab;
         if (firstTab) {
             chrome.tabs.get(firstTab, function (tab) {
-                //если нужно перейти во вкладку то highlight
-                // chrome.tabs.highlight({'tabs': tab.index}, function() {
-                //     chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
                 chrome.tabs.sendMessage(tab.id, {action: "editHPSMTask"}, function (response) {
                 });
-                // });
-                // });
             });
         }
     });
 }
 
 function getRedmineTabIdAndRunScript() {
-    chrome.storage.local.get('redmineTab', function (result) {
+    chrome.storage.sync.get('redmineTab', function (result) {
         var redmineTab = result.redmineTab;
         if (redmineTab) {
             chrome.tabs.onUpdated.addListener(function (tabId, info) {
-                if (tabId === redmineTab && info.status == "complete") {
+                if (tabId == redmineTab && info.status == "complete") {
                     chrome.tabs.executeScript(redmineTab, {
                         file: 'taskCreator.js'
                     });
-                    chrome.storage.local.remove('redmineTab');
+                    chrome.storage.sync.remove('redmineTab');
                 }
             });
         }
@@ -47,7 +42,7 @@ function getRedmineTabIdAndRunScript() {
  * получает id проекта для создания задачи в этом проекте
  */
 function getProjectId() {
-    chrome.storage.local.get('project', function (result) {
+    chrome.storage.sync.get('project', function (result) {
         var project = result.project;
         if (project) {
             createTabForNewTask(project);
@@ -65,11 +60,11 @@ function createTabForNewTask(projectId) {
         var numCurTab = tab.id;
 
         //сохраняем вкладку redmine
-        chrome.storage.local.set({redmineTab: numCurTab});
+        chrome.storage.sync.set({redmineTab: numCurTab});
 
         chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
     });
-    chrome.storage.local.remove('project');
+    chrome.storage.sync.remove('project');
 }
 
 /**
