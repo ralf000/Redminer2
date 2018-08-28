@@ -39,15 +39,25 @@
     "link": "poekhalideti",
     "btn": "btn-success"
   },
-  "mosgortur": {
+  "mgtsite2018": {
     "name": "Сайт Мосгортура",
-    "link": "mosgortur",
+    "link": "mgtsite2018",
     "btn": "btn-success"
   },
   "wwers": {
     "name": "Поддержка МГТ",
-    "link": "wwers",
+    "link": "supportmgt_2018",
     "btn": "btn-success"
+  },
+  "tickets-pp20": {
+    "name": "Тикеты пп.2.0",
+    "link": "tickets-pp20",
+    "btn": "btn-warning"
+  },
+  "pp3": {
+    "name": "Портал поставщиков 3.0",
+    "link": "pp3",
+    "btn": "btn-warning"
   },
   "noproject": {
     "name": "Внепроектная деятельность",

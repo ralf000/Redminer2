@@ -1,5 +1,5 @@
 .container{
-    width: 350px;
+    width: 300px;
 }
 
 /*#projects{*/
@@ -25,5 +25,9 @@
 }
 
 button.btn{
-    margin-bottom: 10px;
+    margin-bottom: 7px;
+}
+
+button.btn:first-child {
+    margin-top: 7px;
 }
