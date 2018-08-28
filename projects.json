@@ -49,14 +49,19 @@
     "link": "supportmgt_2018",
     "btn": "btn-success"
   },
+  "pp3": {
+    "name": "Портал поставщиков 3.0",
+    "link": "pp3",
+    "btn": "btn-warning"
+  },
   "tickets-pp20": {
     "name": "Тикеты пп.2.0",
     "link": "tickets-pp20",
     "btn": "btn-warning"
   },
-  "pp3": {
-    "name": "Портал поставщиков 3.0",
-    "link": "pp3",
+  "contract-pp20": {
+    "name": "Контракт Поддержки ПП 2.0",
+    "link": "contract-pp20",
     "btn": "btn-warning"
   },
   "noproject": {
