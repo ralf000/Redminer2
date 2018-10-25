@@ -162,7 +162,7 @@ if (location.host.indexOf('outlook') > -1) {
     parseAndSend(parseTaskFromOutlook);
 } else if (location.host.indexOf('sm.mos') > -1) {
     parseAndSend(parseTaskFromHPSM);
-} else if (location.host.indexOf('redmine') > -1) {
+} else if (location.host.indexOf('rmine') > -1) {
     if (checkRedmineUrlTask()) {
         //сохраняем ссылку на задачу в redmine
         chrome.storage.sync.set({redmineUrl: location.href});
