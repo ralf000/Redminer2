@@ -55,7 +55,7 @@ function getProjectId() {
  */
 function createTabForNewTask(projectId) {
     chrome.tabs.create({
-        url: "https://redmine.itopcase.ru/projects/" + projectId + "/issues/new"
+        url: "https://rmine.net/projects/" + projectId + "/issues/new"
     }, function (tab) {
         var numCurTab = tab.id;
 

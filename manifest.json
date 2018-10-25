@@ -4,7 +4,7 @@
     "version": "1",
     "content_scripts": [{
             "matches": [
-                "https://redmine.itopcase.ru/*/*",
+                "https://rmine.net/*/*",
                 "https://outlook.office.com/*/*",
                 "https://outlook.office365.com/*/*",
                 "https://sm.mos.ru/*/*"
@@ -15,7 +15,7 @@
         }],
     "permissions": [
         "storage",
-        "https://redmine.itopcase.ru/*/*",
+        "https://rmine.net/*/*",
         "https://outlook.office.com/*/*",
         "https://outlook.office365.com/*/*",
         "https://sm.mos.ru/*/*"
