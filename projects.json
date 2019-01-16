@@ -1,7 +1,7 @@
 {
-  "uid2016": {
-    "name": "АИС УИД 2016/17",
-    "link": "uid2016",
+  "uidtek": {
+    "name": "АИС УИД",
+    "link": "uidtek",
     "btn": "btn-danger"
   },
   "ksp": {
