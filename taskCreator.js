@@ -27,7 +27,11 @@ function parseTaskFromHPSM() {
     return message;
 }
 
-function parseTaskFromOutlook() {
+function isOldOutlook() {
+    return $('.allowTextSelection.customScrollBar.scrollContainer').children().eq(1).length;
+}
+
+function parseTaskFromOldOutlook() {
     var all = $('.allowTextSelection.customScrollBar.scrollContainer').children().eq(1);
     var title = all.find('.rpHighlightSubjectClass').text();
     var body = $($('.conductorContent div[role=document] #Item\\.MessageUniqueBody')[0])
@@ -35,8 +39,22 @@ function parseTaskFromOutlook() {
         .trim()
         .replace(/(\n\r*){2,}/g, '\n')
         .replace(/<!--(.\n*\r*)+-->/g, '');
-    var message = {title: title, body: body};
-    return message;
+    return {title: title, body: body};
+}
+
+function parseTaskFromNewOutlook() {
+    var bodyBlock = $('.wide-content-host .expanded-itempart [dir=ltr]').children().not('#Signature').not('#divtagdefaultwrapper');
+    var title = '';
+    var titleBlock = $('[role=heading]').eq(1);
+    if (titleBlock.length) {
+        title = titleBlock.attr('title');
+    }
+    return {title: title, body: bodyBlock.text()};
+}
+
+
+function parseTaskFromOutlook() {
+    return isOldOutlook() ? parseTaskFromOldOutlook() : parseTaskFromNewOutlook();
 }
 
 /**
