@@ -43,7 +43,7 @@ function parseTaskFromOldOutlook() {
 }
 
 function parseTaskFromNewOutlook() {
-    var bodyBlock = $('.wide-content-host .expanded-itempart [dir=ltr]').children().not('#Signature').not('#divtagdefaultwrapper');
+    var bodyBlock = $('[role=main]');
     var title = '';
     var titleBlock = $('[role=heading]').eq(1);
     if (titleBlock.length) {
