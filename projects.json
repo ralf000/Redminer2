@@ -59,10 +59,10 @@
     "link": "tickets-pp20",
     "btn": "btn-warning"
   },
-  "contract-pp20": {
-    "name": "Контракт Поддержки ПП 2.0",
-    "link": "contract-pp20",
-    "btn": "btn-warning"
+  "pp-claims-hpsm": {
+    "name": "Обращения и инциденты HPSM 2019-2021",
+    "link": "pp-claims-hpsm",
+    "btn": "btn-dark fs-12"
   },
   "noproject": {
     "name": "Внепроектная деятельность",
