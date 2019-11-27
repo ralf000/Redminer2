@@ -39,14 +39,9 @@
     "link": "poekhalideti",
     "btn": "btn-success"
   },
-  "mgtsite2018": {
+  "mgtsite_2019-2020": {
     "name": "Сайт Мосгортура",
-    "link": "mgtsite2018",
-    "btn": "btn-success"
-  },
-  "wwers": {
-    "name": "Поддержка МГТ",
-    "link": "supportmgt_2018",
+    "link": "mgtsite_2019-2020",
     "btn": "btn-success"
   },
   "pp3": {
