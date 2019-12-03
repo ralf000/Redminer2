@@ -28,8 +28,14 @@ function init() {
 function saveCurrentTab() {
         chrome.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
             var activeTab = arrayOfTabs[0];
-            if (activeTab.url.indexOf('sm.mos') === -1)
+            if (activeTab.url
+                && (activeTab.url.indexOf('sm.mos') === -1
+                    && activeTab.url.indexOf('sm.eaist.mos') === -1
+                    && activeTab.url.indexOf('sm.tender.mos') === -1
+                    && activeTab.url.indexOf('212.11.152.7') === -1)
+            ) {
                 return false;
+            }
             var activeTabId = activeTab.id;
             chrome.storage.sync.set({firstTab: activeTabId});
         });

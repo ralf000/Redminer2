@@ -3,8 +3,12 @@ function parseTaskFromHPSM() {
     if (!form) return false;
 
     var taskId = form.find('[ref="instance/incident.id"] span').text();
-    if (!taskId)
+    if (!taskId) {
         taskId = form.find('span[ref="instance/number"]').children('span').text();
+    }
+    if (!taskId) {
+        taskId = form.find('input[name="instance/number"]').val();
+    }
 
     var title = form.find('input[name="instance/title"]').val();
     if (!title) {
@@ -13,18 +17,21 @@ function parseTaskFromHPSM() {
     title = ucFirst(title);
 
     var body = form.find('textarea[name="instance/description/description"]').text();
-    if (!body)
+    if (!body) {
         body = form.find('textarea[name="instance/action/action"]').text();
+    }
+    if (!body) {
+        body = form.find('textarea[ref="instance/action/action"]').text();
+    }
 
     if (!taskId || !title || !body)
         return false;
 
-    var message = {
+    return {
         taskId: taskId ? taskId : '',
         title: title,
         body: body
     };
-    return message;
 }
 
 function isOldOutlook() {
@@ -140,7 +147,11 @@ function setRedmineTaskId() {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
             var form = getActiveFormByHPSM();
-            form.find('input[name="instance/hpc.additional.field.2"]').val(redmineUrl);
+            if (isNewHPSMUrl()) {
+                form.find('input[name="instance/link.to.system/link.to.system[5]"]').val(redmineUrl);
+            } else {
+                form.find('input[name="instance/hpc.additional.field.2"]').val(redmineUrl);
+            }
             clean();
 
             var w = getActiveWindowByHPSM();
@@ -163,7 +174,7 @@ function checkRedmineUrlTask() {
  */
 chrome.extension.onMessage.addListener(
     function (request, sender, send_response) {
-        if (request.action === "editHPSMTask" && location.host.indexOf('sm.mos') > -1) {
+        if (request.action === "editHPSMTask" && isHPSMUrl()) {
             try {
                 setRedmineTaskId();
             } catch (e) {
@@ -173,11 +184,11 @@ chrome.extension.onMessage.addListener(
     });
 
 
-if (location.host.indexOf('outlook') > -1) {
+if (isOutlookUrl()) {
     parseAndSend(parseTaskFromOutlook);
-} else if (location.host.indexOf('sm.mos') > -1) {
+} else if (isHPSMUrl()) {
     parseAndSend(parseTaskFromHPSM);
-} else if (location.host.indexOf('rmine') > -1) {
+} else if (isRedmineUrl()) {
     if (checkRedmineUrlTask()) {
         //сохраняем ссылку на задачу в redmine
         chrome.storage.sync.set({redmineUrl: location.href});

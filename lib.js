@@ -9,7 +9,7 @@ function ucFirst(string) {
 
 /**
  * Возращает id для активного окна, вычисляемый по активной вкладке
- * @returns string id 
+ * @returns string id
  */
 function getActiveTabIdByHPSM() {
     var tabActive = $('ul.x-tab-strip-top li.x-tab-strip-active');
@@ -47,4 +47,26 @@ function getActiveFormByHPSM() {
     return (frame.find('form#topaz').length > 0)
         ? frame.find('form#topaz')
         : frame.contents().find('iframe.ux-mif').contents().find('form#topaz');
+}
+
+function isHPSMUrl() {
+    return location.href.indexOf('sm.eaist.mos') !== -1
+        || location.href.indexOf('sm.mos') !== -1
+        || location.href.indexOf('sm.tender.mos') !== -1
+        || location.href.indexOf('212.11.152.7') !== -1;
+}
+
+function isOutlookUrl() {
+    return location.host.indexOf('outlook') !== -1
+}
+
+function isRedmineUrl() {
+    return location.host.indexOf('rmine') !== -1
+        || location.host.indexOf('redmine') !== -1;
+}
+
+function isNewHPSMUrl() {
+    return location.href.indexOf('https://sm.eaist.mos.ru') !== -1
+        || location.href.indexOf('https://sm.tender.mos.ru') !== -1
+        || location.href.indexOf('212.11.152.7') !== -1;
 }

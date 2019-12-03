@@ -83,6 +83,13 @@ chrome.extension.onMessage.addListener(
 
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (tab && tab.url.indexOf('sm.mos'))
-        chrome.tabs.executeScript(null, {file: 'onUpdate.js'});
+    if (tab && tab.url
+        && (tab.url.indexOf('sm.mos') === -1
+            && tab.url.indexOf('sm.eaist.mos') === -1
+            && tab.url.indexOf('sm.tender.mos') === -1
+            && tab.url.indexOf('212.11.152.7') === -1)
+    ) {
+        return false;
+    }
+    chrome.tabs.executeScript(null, {file: 'onUpdate.js'});
 });

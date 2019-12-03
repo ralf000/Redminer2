@@ -7,6 +7,9 @@
                 "https://rmine.net/*/*",
                 "https://outlook.office.com/*/*",
                 "https://outlook.office365.com/*/*",
+                "https://212.11.152.7/*",
+                "https://sm.eaist.mos.ru/*",
+                "https://sm.tender.mos.ru/*",
                 "https://sm.mos.ru/*/*"
                 ],
             "js": ["jquery.min.js", "lib.js"],
@@ -18,6 +21,9 @@
         "https://rmine.net/*/*",
         "https://outlook.office.com/*/*",
         "https://outlook.office365.com/*/*",
+        "https://212.11.152.7/*",
+        "https://sm.eaist.mos.ru/*",
+        "https://sm.tender.mos.ru/*",
         "https://sm.mos.ru/*/*"
         ],
     "browser_action": {
