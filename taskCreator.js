@@ -1,36 +1,46 @@
 function parseTaskFromHPSM() {
-    var form = getActiveFormByHPSM();//lib.js
+    var form = getActiveFormByHPSM();
     if (!form) return false;
 
-    var taskId = form.find('[ref="instance/incident.id"] span').text();
-    if (!taskId) {
-        taskId = form.find('span[ref="instance/number"]').children('span').text();
-    }
-    if (!taskId) {
-        taskId = form.find('input[name="instance/number"]').val();
-    }
+    var taskId = form.find('[ref="instance/incident.id"] span').text()
+        || form.find('span[ref="instance/number"]').children('span').text()
+        || form.find('input[name="instance/number"]').val();
+    if (!taskId) return false;
 
-    var title = form.find('input[name="instance/title"]').val();
-    if (!title) {
-        title = form.find('input[name="instance/brief.description"]').val();
-    }
+    var title = form.find('input[name="instance/title"]').val()
+        || form.find('input[name="instance/brief.description"]').val()
+        || '';
     title = ucFirst(title);
 
-    var body = form.find('textarea[name="instance/description/description"]').text();
-    if (!body) {
-        body = form.find('textarea[name="instance/action/action"]').text();
-    }
-    if (!body) {
-        body = form.find('textarea[ref="instance/action/action"]').text();
-    }
+    var body = form.find('textarea[name="instance/description/description"]').text()
+        || form.find('textarea[name="instance/action/action"]').text()
+        || form.find('textarea[ref="instance/action/action"]').text()
+        || '';
 
-    if (!taskId || !title || !body)
-        return false;
+    var company = form.find('input[alias="instance/company.full.name"]').val() || '';
+    if (company) company = '*Имя компании*: ' + ucFirst(company) + "\n";
+    var companyInn = form.find('input[alias="instance/company"]').val() || '';
+    if (companyInn) companyInn = '*ИНН компании*: ' + companyInn + "\n";
+    var companyKpp = form.find('input[name="instance/company.kpp"]').val() || '';
+    if (companyKpp) companyKpp = '*КПП компании*: ' + companyKpp + "\n";
+
+    var links = '';
+    $.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function (index, fieldNum) {
+        var link = form.find('input[name="instance/link.to.system/link.to.system[' + fieldNum + ']"]');
+        if (link.length && link.val) {
+            links += link.val() + "\n";
+        }
+    });
+    if (links) links = '*Ссылки на системы*: ' + "\n" + links;
+
+    if (company || companyInn || companyKpp || links) {
+        var additionalInfo = "\n\n" + company + companyInn + companyKpp + links
+    }
 
     return {
         taskId: taskId ? taskId : '',
         title: title,
-        body: body
+        body: body + additionalInfo
     };
 }
 
@@ -149,6 +159,8 @@ function setRedmineTaskId() {
             var form = getActiveFormByHPSM();
             if (isNewHPSMUrl()) {
                 form.find('input[name="instance/link.to.system/link.to.system[5]"]').val(redmineUrl);
+                var redmineId = redmineUrl.match(/\d+/)[0];
+                form.find('input[name="instance/external.link.tp3"]').val(redmineId);
             } else {
                 form.find('input[name="instance/hpc.additional.field.2"]').val(redmineUrl);
             }
@@ -160,7 +172,10 @@ function setRedmineTaskId() {
             var btn = w.find('button:contains("Сохранить")');
             if (!btn)
                 throw new Error('Не удалось получить кнопку "Сохранить"');
-            btn.click();
+            if (btn[1]) {
+                return btn[1].click();
+            }
+            return btn[0].click();
         }
     });
 }
