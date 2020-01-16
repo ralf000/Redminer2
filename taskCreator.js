@@ -27,14 +27,17 @@ function parseTaskFromHPSM() {
     var links = '';
     $.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function (index, fieldNum) {
         var link = form.find('input[name="instance/link.to.system/link.to.system[' + fieldNum + ']"]');
-        if (link.length && link.val) {
+        if (link.length && link.val().length) {
             links += link.val() + "\n";
         }
     });
     if (links) links = '*Ссылки на системы*: ' + "\n" + links;
 
+    var createdFromIncidentId = form.find('input[alias="instance/incident.id"]').val() || '';
+    if (createdFromIncidentId) createdFromIncidentId = '*Создано из обращения*: ' + createdFromIncidentId + "\n";
+
     if (company || companyInn || companyKpp || links) {
-        var additionalInfo = "\n\n" + company + companyInn + companyKpp + links
+        var additionalInfo = "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
     }
 
     return {
