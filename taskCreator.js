@@ -65,7 +65,7 @@ function parseTaskFromOldOutlook() {
 function parseTaskFromNewOutlook() {
     var bodyBlock = $('[role=main]');
     var title = bodyBlock.children().first().text();
-    var text = bodyBlock.children().eq(1).find('.expanded-itempart').children().eq(1).text();
+    var text = bodyBlock.children().eq(1).find('.allowTextSelection').eq(1).text();
     return {title: title, body: text};
 }
 
