@@ -2,15 +2,30 @@ function parseTaskFromHPSM() {
     var form = getActiveFormByHPSM();
     if (!form) return false;
 
+    //Код инцидента/обращения
     var taskId = form.find('[ref="instance/incident.id"] span').text()
         || form.find('span[ref="instance/number"]').children('span').text()
         || form.find('input[name="instance/number"]').val();
     if (!taskId) return false;
-
+    //заголовок
     var title = form.find('input[name="instance/title"]').val()
         || form.find('input[name="instance/brief.description"]').val()
         || '';
     title = ucFirst(title);
+    //предельный срок
+    var period = form.find('span[ref="instance/next.ola.breach"]').children('span').text()
+        || form.find('input[name="instance/next.ola.breach"]').val();
+    if (period) {
+        period = period.split(' ')[0].split('.');
+    }
+    //приоритет
+    var priority = form.find('span[ref="instance/priority.code"]').children('span').text()
+        || form.find('input[name="instance/priority.code"]').val()
+        || form.find('input[alias="instance/priority.code"]').val();
+
+    if (priority) {
+        priority = priority.match(/\d+/)[0];
+    }
 
     var body = form.find('textarea[name="instance/description/description"]').text()
         || form.find('textarea[name="instance/action/action"]').text()
@@ -43,8 +58,34 @@ function parseTaskFromHPSM() {
     return {
         taskId: taskId ? taskId : '',
         title: title,
+        period: period,
+        priority: priority,
         body: body + additionalInfo
     };
+}
+
+//парсит файлы
+function addFilesToMessage() {
+    var form = getActiveFormByHPSM();
+    var filesFrame = form.find('[title="Вложения обращения"]');
+    if (filesFrame.length) {
+        var files = filesFrame.contents().find('a.shadowFocus');
+        var parsedFiles = {};
+        files.each(function (id, file) {
+            file = $(file);
+            var name = file.find('.xTableCell');
+            if (!name) return true;//continue
+            var url = location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
+            fetch(url)
+                .then(response => response.blob())
+                .then(data => {
+                    parsedFiles[name] = data;
+                    var message = parseTaskFromHPSM();
+                    message['files'] = parsedFiles;
+                    return message;
+                });
+        });
+    }
 }
 
 function isOldOutlook() {
@@ -103,8 +144,22 @@ function getNotSaveVar(callback) {
  * @param message object
  */
 function createTask(message) {
+    console.log(message);
     $('select#issue_tracker_id option:contains("Поддержка")').attr('selected', 'selected').change().click();
-    $('input#issue_subject').val(message.title);
+    $('input#issue_subject').val(message.taskId + '. ' + message.title);
+    if (message.period) {
+        $('input#issue_due_date').val('20' + message.period[2] + '-' + message.period[1] + '-' + (message.period[0] - 1));
+    }
+    if (message.priority) {
+        var rmPriority = 2;
+        if (message.priority == 3) {
+            rmPriority = 4;
+        } else if (message.priority == 1 || message.priority == 2) {
+            rmPriority = 5;
+        }
+        $('select#issue_priority_id option[value='+rmPriority+']').prop('selected', true);
+    }
+
     $('textarea#issue_description').val(message.body);
     $('input#issue_estimated_hours').val(1);
     $('select#issue_assigned_to_id option:contains("<< мне >>")').attr('selected', 'selected');
@@ -141,8 +196,11 @@ function createTask(message) {
  */
 function parseAndSend(callback) {
     var msg = callback();
-    if (!msg)
+    console.log(msg);
+    if (!msg) {
+        console.error('Попытка передачи пустый данных');
         return false;
+    }
     chrome.storage.sync.set({message: msg});
     chrome.extension.sendMessage({create: "on"});
 }
