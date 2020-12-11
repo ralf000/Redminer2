@@ -13,11 +13,11 @@ function init() {
             for (key in data) {
                 $('.' + data[key].link).on('click', function () {
                     if ($(this).hasClass('not-save'))
-                        chrome.storage.sync.set({notSave: 'on'});
+                        chrome.storage.local.set({notSave: 'on'});
                     else
-                        chrome.storage.sync.set({notSave: 'off'});
+                        chrome.storage.local.set({notSave: 'off'});
 
-                    chrome.storage.sync.set({project: $(this).attr('id')});
+                    chrome.storage.local.set({project: $(this).attr('id')});
                     chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
                 });
             }
@@ -37,7 +37,7 @@ function saveCurrentTab() {
                 return false;
             }
             var activeTabId = activeTab.id;
-            chrome.storage.sync.set({firstTab: activeTabId});
+            chrome.storage.local.set({firstTab: activeTabId});
         });
 }
 

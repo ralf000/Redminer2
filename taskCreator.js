@@ -55,37 +55,41 @@ function parseTaskFromHPSM() {
         var additionalInfo = "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
     }
 
-    return {
-        taskId: taskId ? taskId : '',
-        title: title,
-        period: period,
-        priority: priority,
-        body: body + additionalInfo
-    };
+    return new Promise(function (resolve, reject) {
+        resolve({
+            taskId: taskId ? taskId : '',
+            title: title,
+            period: period,
+            priority: priority,
+            body: body + additionalInfo
+        })
+    });
 }
 
-//парсит файлы
-function addFilesToMessage() {
-    var form = getActiveFormByHPSM();
-    var filesFrame = form.find('[title="Вложения обращения"]');
-    if (filesFrame.length) {
-        var files = filesFrame.contents().find('a.shadowFocus');
-        var parsedFiles = {};
-        files.each(function (id, file) {
-            file = $(file);
-            var name = file.find('.xTableCell');
-            if (!name) return true;//continue
-            var url = location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
-            fetch(url)
-                .then(response => response.blob())
-                .then(data => {
-                    parsedFiles[name] = data;
-                    var message = parseTaskFromHPSM();
-                    message['files'] = parsedFiles;
-                    return message;
-                });
-        });
-    }
+//парсит файлы и добавляет к сообщению
+function addFilesToMessage(message) {
+    return new Promise((resolve, reject) => {
+        var form = getActiveFormByHPSM();
+        var filesFrame = form.find('[title="Вложения обращения"]');
+        if (filesFrame.length) {
+            var files = filesFrame.contents().find('a.shadowFocus');
+
+            Promise.all(files.toArray().map(function (file) {
+                file = $(file);
+                var name = file.find('.xTableCell').text();
+                if (!name) return true;//continue
+                return  location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
+                /*return fetch(url).then(response => response.text().then(data => {
+                    return {name: name, value: data};
+                }))*/
+            })).then(urls => {
+                // message['files'] = parsedFiles;
+                urls = urls.slice(0, 30);
+                chrome.extension.sendMessage({files: urls});
+                resolve(message);
+            });
+        }
+    });
 }
 
 function isOldOutlook() {
@@ -112,14 +116,16 @@ function parseTaskFromNewOutlook() {
 
 
 function parseTaskFromOutlook() {
-    return isOldOutlook() ? parseTaskFromOldOutlook() : parseTaskFromNewOutlook();
+    return new Promise(function (resolve, reject) {
+        resolve(isOldOutlook() ? parseTaskFromOldOutlook() : parseTaskFromNewOutlook());
+    });
 }
 
 /**
  * Получает объект с данными задачи, проверяет установлен ли заголовок
  */
 function getTaskData() {
-    chrome.storage.sync.get('message', function (result) {
+    chrome.storage.local.get('message', function (result) {
         var message = result.message;
         if (message.title) {
             createTask(message);
@@ -130,10 +136,10 @@ function getTaskData() {
 }
 
 function getNotSaveVar(callback) {
-    chrome.storage.sync.get('notSave', function (result) {
+    chrome.storage.local.get('notSave', function (result) {
         var notSave = result.notSave;
         if (notSave === 'off') {
-            chrome.storage.sync.remove('notSave');
+            chrome.storage.local.remove('notSave');
             callback();
         }
     });
@@ -144,9 +150,9 @@ function getNotSaveVar(callback) {
  * @param message object
  */
 function createTask(message) {
-    console.log(message);
     $('select#issue_tracker_id option:contains("Поддержка")').attr('selected', 'selected').change().click();
-    $('input#issue_subject').val(message.taskId + '. ' + message.title);
+    var title = message.taskId ? message.taskId + '. ' + message.title : message.title;
+    $('input#issue_subject').val(title);
     if (message.period) {
         $('input#issue_due_date').val('20' + message.period[2] + '-' + message.period[1] + '-' + (message.period[0] - 1));
     }
@@ -171,10 +177,19 @@ function createTask(message) {
             </div>\n\
             </div>');
     $('input#issue_custom_field_values_11').val(message.taskId ? message.taskId : '');
-    chrome.storage.sync.remove('message');
+    chrome.storage.local.remove('message');
+
+    //если скачивались файлы то нажимаем "выбрать файлы"
+    chrome.storage.local.get('hasFiles', function (result) {
+        var hasFiles = result.hasFiles;
+        if (hasFiles === true) {
+            chrome.storage.local.remove('hasFiles');
+            $('[name="attachments[dummy][file]"]').click();
+        }
+    });
 
     //если таск из hpsm, то переменная firstTab не пустая
-    chrome.storage.sync.get('firstTab', function (result) {
+    chrome.storage.local.get('firstTab', function (result) {
         var firstTab = result.firstTab;
         if (firstTab) {
             chrome.extension.sendMessage({getRedmineTaskId: "on"});
@@ -185,36 +200,32 @@ function createTask(message) {
         getNotSaveVar(function () {
             $('input[type=submit]')[0].click();
         });
-
     });
-
 }
 
 /**
- * @param callback function
+ * @param message
  * должна возвращать объект задачи вида {title: 'title', body: 'body', [ taskId: taskId]}
  */
-function parseAndSend(callback) {
-    var msg = callback();
-    console.log(msg);
-    if (!msg) {
+function send(message) {
+    if (!message) {
         console.error('Попытка передачи пустый данных');
         return false;
     }
-    chrome.storage.sync.set({message: msg});
+    chrome.storage.local.set({message: message});
     chrome.extension.sendMessage({create: "on"});
 }
 
 function clean() {
-    chrome.storage.sync.remove('firstTab');
-    chrome.storage.sync.remove('project');
-    chrome.storage.sync.remove('redmineTab');
-    chrome.storage.sync.remove('redmineUrl');
-    chrome.storage.sync.remove('notSave');
+    chrome.storage.local.remove('firstTab');
+    chrome.storage.local.remove('project');
+    chrome.storage.local.remove('redmineTab');
+    chrome.storage.local.remove('redmineUrl');
+    chrome.storage.local.remove('notSave');
 }
 
 function setRedmineTaskId() {
-    chrome.storage.sync.get('redmineUrl', function (result) {
+    chrome.storage.local.get('redmineUrl', function (result) {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
             var form = getActiveFormByHPSM();
@@ -261,17 +272,19 @@ chrome.extension.onMessage.addListener(
 
 
 if (isOutlookUrl()) {
-    parseAndSend(parseTaskFromOutlook);
+    parseTaskFromOutlook()
+        .then(message => send(message));
 } else if (isHPSMUrl()) {
-    parseAndSend(parseTaskFromHPSM);
+    parseTaskFromHPSM()
+        .then(message => addFilesToMessage(message))
+        .then(message => send(message));
 } else if (isRedmineUrl()) {
     if (checkRedmineUrlTask()) {
         //сохраняем ссылку на задачу в redmine
-        chrome.storage.sync.set({redmineUrl: location.href});
+        chrome.storage.local.set({redmineUrl: location.href});
         //можно переходить обратно в hpsm
         chrome.extension.sendMessage({return: "on"});
     } else {
         getTaskData();
     }
 }
-

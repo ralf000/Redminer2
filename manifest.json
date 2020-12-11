@@ -18,6 +18,10 @@
         }],
     "permissions": [
         "storage",
+        "unlimitedStorage",
+        "downloads",
+        "background",
+        "file://*",
         "https://rmine.net/*/*",
         "https://outlook.office.com/*/*",
         "https://outlook.office365.com/*/*",
