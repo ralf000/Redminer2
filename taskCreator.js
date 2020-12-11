@@ -70,25 +70,35 @@ function parseTaskFromHPSM() {
 function addFilesToMessage(message) {
     return new Promise((resolve, reject) => {
         var form = getActiveFormByHPSM();
-        var filesFrame = form.find('[title="Вложения обращения"]');
-        if (filesFrame.length) {
-            var files = filesFrame.contents().find('a.shadowFocus');
 
-            Promise.all(files.toArray().map(function (file) {
-                file = $(file);
-                var name = file.find('.xTableCell').text();
-                if (!name) return true;//continue
-                return  location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
-                /*return fetch(url).then(response => response.text().then(data => {
-                    return {name: name, value: data};
-                }))*/
-            })).then(urls => {
-                // message['files'] = parsedFiles;
-                urls = urls.slice(0, 30);
-                chrome.extension.sendMessage({files: urls});
-                resolve(message);
-            });
+        //если вложений нет, выходим
+        if (form.find('[class^=notebookTab]:contains("Вложения (0)")').length) {
+            return resolve(message);
         }
+
+        form.find('[class^=notebookTab]:contains("Вложения")')[0].click();
+
+        wait(() => getActiveFormByHPSM().find('[class^=notebookTab]:contains("Вложения обращения")').length)
+            .then(() => {
+                form.find('[class^=notebookTab]:contains("Вложения обращения")')[0].click();
+                wait(() => getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus').length)
+                    .then(() => {
+                        var files = getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus');
+                        Promise.all(files.toArray().map(function (file) {
+                            file = $(file);
+                            var name = file.find('.xTableCell').text();
+                            if (!name) return true;//continue
+                            return location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
+                            /*return fetch(url).then(response => response.text().then(data => {
+                                return {name: name, value: data};
+                            }))*/
+                        })).then(urls => {
+                            urls = urls.slice(0, 30);
+                            chrome.extension.sendMessage({files: urls});
+                            resolve(message);
+                        });
+                    });
+            })
     });
 }
 
@@ -163,7 +173,7 @@ function createTask(message) {
         } else if (message.priority == 1 || message.priority == 2) {
             rmPriority = 5;
         }
-        $('select#issue_priority_id option[value='+rmPriority+']').prop('selected', true);
+        $('select#issue_priority_id option[value=' + rmPriority + ']').prop('selected', true);
     }
 
     $('textarea#issue_description').val(message.body);

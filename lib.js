@@ -1,3 +1,22 @@
+function wait(callback, delay, maxWaiting) {
+    return new Promise((resolve, reject) => {
+        delay = delay || 50;
+        var timeCounter = 0;
+        maxWaiting = maxWaiting || 1000 * 5;
+        var interval = setInterval(function () {
+            if (callback()) {
+                clearInterval(interval);
+                resolve()
+            }
+            timeCounter += delay;
+            if (timeCounter >= maxWaiting) {
+                clearInterval(interval);
+                reject();
+            }
+        }, delay)
+    });
+}
+
 /**
  * переводит первый символ в верхний регистр
  * @param string
