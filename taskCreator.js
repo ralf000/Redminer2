@@ -14,9 +14,12 @@ function parseTaskFromHPSM() {
     title = ucFirst(title);
     //предельный срок
     var period = form.find('span[ref="instance/next.ola.breach"]').children('span').text()
-        || form.find('input[name="instance/next.ola.breach"]').val();
+        || form.find('input[name="instance/next.ola.breach"]').val()
+        || form.find('input[name="instance/hpc.next.breach"]').val();
     if (period) {
-        period = period.split(' ')[0].split('.');
+        let separator = period.match(/\//) ? '/' : '.';
+        period = period.split(' ')[0];
+        period = period.split(separator);
     }
     //приоритет
     var priority = form.find('span[ref="instance/priority.code"]').children('span').text()
@@ -69,6 +72,11 @@ function parseTaskFromHPSM() {
 //парсит файлы и добавляет к сообщению
 function addFilesToMessage(message) {
     return new Promise((resolve, reject) => {
+        //если это старый hpsm то не скачиваем вложения
+        if (isOldHPSM()) {
+            resolve(message);
+        }
+
         var form = getActiveFormByHPSM();
 
         //если вложений нет, выходим

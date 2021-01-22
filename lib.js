@@ -75,6 +75,10 @@ function isHPSMUrl() {
         || location.href.indexOf('212.11.152.7') !== -1;
 }
 
+function isOldHPSM() {
+    return location.href.indexOf('sm.mos') !== -1
+}
+
 function isOutlookUrl() {
     return location.host.indexOf('outlook') !== -1
 }
