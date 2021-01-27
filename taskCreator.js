@@ -145,10 +145,8 @@ function parseTaskFromOutlook() {
 function getTaskData() {
     chrome.storage.local.get('message', function (result) {
         var message = result.message;
-        if (message.title) {
+        if (message && message.title) {
             createTask(message);
-        } else {
-            throw new Error('Отсутствует заголовок для создаваемой задачи');
         }
     });
 }
@@ -172,7 +170,12 @@ function createTask(message) {
     var title = message.taskId ? message.taskId + '. ' + message.title : message.title;
     $('input#issue_subject').val(title);
     if (message.period) {
-        $('input#issue_due_date').val('20' + message.period[2] + '-' + message.period[1] + '-' + (message.period[0] - 1));
+        let period = new Date('20' + message.period[2], message.period[1] - 1, message.period[0]);
+        period.setDate(period.getDate() - 1);
+        let month = period.getMonth() + 1;
+        month = ('0' + month).slice(-2);
+        let date = period.getFullYear() + '-' + month + '-' + period.getDate();
+        $('input#issue_due_date').val(date);
     }
     if (message.priority) {
         var rmPriority = 2;
