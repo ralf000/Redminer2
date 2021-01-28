@@ -172,10 +172,12 @@ function createTask(message) {
     if (message.period) {
         let period = new Date('20' + message.period[2], message.period[1] - 1, message.period[0]);
         period.setDate(period.getDate() - 1);
+        let year = period.getFullYear();
         let month = period.getMonth() + 1;
         month = ('0' + month).slice(-2);
-        let date = period.getFullYear() + '-' + month + '-' + period.getDate();
-        $('input#issue_due_date').val(date);
+        let day = period.getDate();
+        day = ('0' + day).slice(-2);
+        $('input#issue_due_date').val(year + '-' + month + '-' + day);
     }
     if (message.priority) {
         var rmPriority = 2;
