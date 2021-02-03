@@ -129,7 +129,14 @@ function parseTaskFromNewOutlook() {
     var bodyBlock = $('[role=main]');
     var title = bodyBlock.children().first().text();
     var text = bodyBlock.children().eq(1).find('.allowTextSelection').eq(1).text();
-    return {title: title, body: text};
+
+    //дата завершения
+    let period = new Date();
+    period.setDate(period.getDate() + 7)
+    let year = period.getFullYear().toString().substr(2);
+    let month = period.getMonth() + 1;
+    let day = period.getDate();
+    return {title: title, body: text, period: [day, month, year]};
 }
 
 
