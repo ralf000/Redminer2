@@ -12,6 +12,18 @@ function parseTaskFromHPSM() {
         || form.find('input[name="instance/brief.description"]').val()
         || '';
     title = ucFirst(title);
+    //контактное лицо
+    var contact = form.find('input[alias="instance/contact.name"]').val()
+        || '';
+    if (contact) {
+        contact = '*Контактное лицо*: ' + contact + "\n";
+    }
+    //email
+    var email = form.find('input[name="instance/contact.email"]').val()
+        || '';
+    if (email) {
+        email = '*E-mail контактного лица*: ' + email + "\n";
+    }
     //предельный срок
     var period = form.find('span[ref="instance/next.ola.breach"]').children('span').text()
         || form.find('input[name="instance/next.ola.breach"]').val()
@@ -54,14 +66,19 @@ function parseTaskFromHPSM() {
     var createdFromIncidentId = form.find('input[alias="instance/incident.id"]').val() || '';
     if (createdFromIncidentId) createdFromIncidentId = '*Создано из обращения*: ' + createdFromIncidentId + "\n";
 
+    var additionalInfo = '';
+    if (contact || email) {
+        additionalInfo += "\n\n" + contact + email;
+    }
     if (company || companyInn || companyKpp || links) {
-        var additionalInfo = "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
+        additionalInfo += "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
     }
 
     return new Promise(function (resolve, reject) {
         resolve({
             taskId: taskId ? taskId : '',
             title: title,
+            email: email,
             period: period,
             priority: priority,
             body: body + additionalInfo
