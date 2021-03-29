@@ -86,6 +86,66 @@ function parseTaskFromHPSM() {
     });
 }
 
+//инциденты
+function addFilesFromFirstTabToMessage() {
+    return new Promise((resolve, reject) => {
+        //если нет вложений
+        if (getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента — (0)")').length) {
+            return reject();
+        }
+        //скачиваем файлы инцидента
+        getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента")')[0].click();
+        wait(() => getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row').length)
+            .then(() => {
+                /*var files = getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row a');
+                Promise.all(files.toArray().map(function (file) {
+                    var href = $(file).attr('href');
+                    var start = href.indexOf("('");
+                    var end = href.indexOf("')");
+                    var data = href.substr(start + "('".length, end - start - "')".length).split("','");
+
+                    return `${location.origin}/${location.pathname.split('/')[1]}/detail.do?ctx=attachment&action=open&name=${data[0]}&id=${data[1]}&type=${data[2]}&len=${data[3]}&thread=1`;
+                })).then(urls => {
+                    urls = urls.slice(0, 30);
+                    console.log(urls);
+                    chrome.extension.sendMessage({files: urls});
+                    resolve();
+                });*/
+
+                var files = getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row a');
+                files.each((i, file) => {
+                    setTimeout(() => file.click(), 500 * i);
+                });
+            });
+        return resolve();
+    });
+}
+
+//обращения
+function addFilesFromSecondTabToMessage() {
+    return new Promise((resolve, reject) => {
+        //если нет вложений
+        if (getActiveFormByHPSM().find('#X205_t:contains("Вложения обращения — (0)")').length) {
+            return reject();
+        }
+        getActiveFormByHPSM().find('#X205_t:contains("Вложения обращения")')[0].click();
+        wait(() => getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus').length)
+            .then(() => {
+                var files = getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus');
+                Promise.all(files.toArray().map(function (file) {
+                    file = $(file);
+                    var name = file.find('.xTableCell').text();
+                    if (!name) return true;//continue
+                    return location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
+                })).then(urls => {
+                    urls = urls.slice(0, 30);
+                    chrome.extension.sendMessage({files: urls});
+                    resolve();
+                });
+            });
+    });
+}
+
 //парсит файлы и добавляет к сообщению
 function addFilesToMessage(message) {
     return new Promise((resolve, reject) => {
@@ -97,33 +157,17 @@ function addFilesToMessage(message) {
         var form = getActiveFormByHPSM();
 
         //если вложений нет, выходим
-        if (form.find('[class^=notebookTab]:contains("Вложения (0)")').length) {
+        if (form.find('#X200_t:contains("Вложения (0)")').length) {
             return resolve(message);
         }
 
-        form.find('[class^=notebookTab]:contains("Вложения")')[0].click();
+        form.find('#X200_t:contains("Вложения")')[0].click();
 
-        wait(() => getActiveFormByHPSM().find('[class^=notebookTab]:contains("Вложения обращения")').length)
-            .then(() => {
-                form.find('[class^=notebookTab]:contains("Вложения обращения")')[0].click();
-                wait(() => getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus').length)
-                    .then(() => {
-                        var files = getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus');
-                        Promise.all(files.toArray().map(function (file) {
-                            file = $(file);
-                            var name = file.find('.xTableCell').text();
-                            if (!name) return true;//continue
-                            return location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
-                            /*return fetch(url).then(response => response.text().then(data => {
-                                return {name: name, value: data};
-                            }))*/
-                        })).then(urls => {
-                            urls = urls.slice(0, 30);
-                            chrome.extension.sendMessage({files: urls});
-                            resolve(message);
-                        });
-                    });
-            })
+        wait(() => getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента")').length)
+            .then(() => addFilesFromFirstTabToMessage())
+            .then(resolve => addFilesFromSecondTabToMessage(), reject => addFilesFromSecondTabToMessage())
+            .then(() => resolve(message));
+
     });
 }
 
@@ -227,13 +271,13 @@ function createTask(message) {
     chrome.storage.local.remove('message');
 
     //если скачивались файлы то нажимаем "выбрать файлы"
-    chrome.storage.local.get('hasFiles', function (result) {
+    /*chrome.storage.local.get('hasFiles', function (result) {
         var hasFiles = result.hasFiles;
         if (hasFiles === true) {
             chrome.storage.local.remove('hasFiles');
             $('[name="attachments[dummy][file]"]').click();
         }
-    });
+    });*/
 
     //если таск из hpsm, то переменная firstTab не пустая
     chrome.storage.local.get('firstTab', function (result) {
