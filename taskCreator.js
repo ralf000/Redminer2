@@ -188,12 +188,19 @@ function parseTaskFromOldOutlook() {
 
 function parseTaskFromNewOutlook() {
     var bodyBlock = $('[role=main]');
-    var title = bodyBlock.children().first().text();
-    var text = bodyBlock.children().eq(1).find('.allowTextSelection').eq(1).text();
+    var title = bodyBlock.children().first().find('span').first().text().trim();
+    var text = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length).text().trim();
+    if (!text.length) {
+        text = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length).text().trim();
+    }
+    if (text.length) {
+        text = text.replaceAll(/(\n){2,}/g, "\n");
+    }
 
     //дата завершения
     let period = new Date();
-    period.setDate(period.getDate() + 7)
+    let periodInDays = text.match('срочн') ? 2 : 7;
+    period.setDate(period.getDate() + periodInDays)
     let year = period.getFullYear().toString().substr(2);
     let month = period.getMonth() + 1;
     let day = period.getDate();
