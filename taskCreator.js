@@ -189,12 +189,13 @@ function parseTaskFromOldOutlook() {
 function parseTaskFromNewOutlook() {
     var bodyBlock = $('[role=main]');
     var title = bodyBlock.children().first().find('span').first().text().trim();
-    var text = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length).text().trim();
-    if (!text.length) {
-        text = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length).text().trim();
+    var textDivs = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
+    if (!textDivs.length) {
+        textDivs = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
     }
+    var text = textDivs.map((i, div) => $(div).text().trim());
     if (text.length) {
-        text = text.replaceAll(/(\n){2,}/g, "\n");
+        text = text.toArray().join('\n').replaceAll(/(\n){2,}/g, "\n");
     }
 
     //дата завершения
