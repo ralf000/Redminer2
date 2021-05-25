@@ -90,12 +90,12 @@ function parseTaskFromHPSM() {
 function addFilesFromFirstTabToMessage() {
     return new Promise((resolve, reject) => {
         //если нет вложений
-        if (getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента — (0)")').length) {
+        if (getActiveFormByHPSM().find('a:contains("Вложения инцидента — (0)")').length) {
             return reject();
         }
         //скачиваем файлы инцидента
-        getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента")')[0].click();
-        wait(() => getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row').length)
+        getActiveFormByHPSM().find('a:contains("Вложения инцидента")')[0].click();
+        wait(() => getActiveFormByHPSM().find('.MultipleAttachment').find('.x-grid3-row').length)
             .then(() => {
                 /*var files = getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row a');
                 Promise.all(files.toArray().map(function (file) {
@@ -112,7 +112,7 @@ function addFilesFromFirstTabToMessage() {
                     resolve();
                 });*/
 
-                var files = getActiveFormByHPSM().find('#X203_p').contents().find('.x-grid3-row a');
+                var files = getActiveFormByHPSM().find('.MultipleAttachment').find('.x-grid3-row a');
                 files.each((i, file) => {
                     setTimeout(() => file.click(), 500 * i);
                 });
@@ -125,10 +125,10 @@ function addFilesFromFirstTabToMessage() {
 function addFilesFromSecondTabToMessage() {
     return new Promise((resolve, reject) => {
         //если нет вложений
-        if (getActiveFormByHPSM().find('#X205_t:contains("Вложения обращения — (0)")').length) {
+        if (getActiveFormByHPSM().find('a:contains("Вложения обращения — (0)")').length) {
             return reject();
         }
-        getActiveFormByHPSM().find('#X205_t:contains("Вложения обращения")')[0].click();
+        getActiveFormByHPSM().find('a:contains("Вложения обращения")')[0].click();
         wait(() => getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus').length)
             .then(() => {
                 var files = getActiveFormByHPSM().find('[title="Вложения обращения"]').contents().find('a.shadowFocus');
@@ -157,13 +157,13 @@ function addFilesToMessage(message) {
         var form = getActiveFormByHPSM();
 
         //если вложений нет, выходим
-        if (form.find('#X200_t:contains("Вложения (0)")').length) {
+        if (form.find('a:contains("Вложения (0)")').length) {
             return resolve(message);
         }
 
-        form.find('#X200_t:contains("Вложения")')[0].click();
+        form.find('a:contains("Вложения (")')[0].click();
 
-        wait(() => getActiveFormByHPSM().find('#X203_t:contains("Вложения инцидента")').length)
+        wait(() => getActiveFormByHPSM().find('a:contains("Вложения инцидента")').length)
             .then(() => addFilesFromFirstTabToMessage())
             .then(resolve => addFilesFromSecondTabToMessage(), reject => addFilesFromSecondTabToMessage())
             .then(() => resolve(message));
