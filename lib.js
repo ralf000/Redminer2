@@ -89,7 +89,7 @@ function isRedmineUrl() {
 }
 
 function isNewHPSMUrl() {
-    return location.href.indexOf('https://sm.eaist.mos.ru') !== -1
-        || location.href.indexOf('https://sm.tender.mos.ru') !== -1
+    return location.href.indexOf('sm.eaist.mos.ru') !== -1
+        || location.href.indexOf('sm.tender.mos.ru') !== -1
         || location.href.indexOf('212.11.152.7') !== -1;
 }

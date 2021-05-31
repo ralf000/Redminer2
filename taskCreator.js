@@ -327,15 +327,21 @@ function setRedmineTaskId() {
     chrome.storage.local.get('redmineUrl', function (result) {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
+            clean();
             var form = getActiveFormByHPSM();
+            var fieldForRedmineUrl;
             if (isNewHPSMUrl()) {
-                form.find('input[name="instance/link.to.system/link.to.system[5]"]').val(redmineUrl);
+                fieldForRedmineUrl = form.find('input[name="instance/link.to.system/link.to.system[5]"]');
+                if (!fieldForRedmineUrl.length) return;
+                fieldForRedmineUrl.val(redmineUrl);
                 var redmineId = redmineUrl.match(/\d+/)[0];
+                if (!redmineId) return;
                 form.find('input[name="instance/external.link.tp3"]').val(redmineId);
             } else {
-                form.find('input[name="instance/hpc.additional.field.2"]').val(redmineUrl);
+                fieldForRedmineUrl = form.find('input[name="instance/hpc.additional.field.2"]');
+                if (!fieldForRedmineUrl.length) return;
+                fieldForRedmineUrl.val(redmineUrl);
             }
-            clean();
 
             var w = getActiveWindowByHPSM();
             if (!w)
@@ -344,9 +350,9 @@ function setRedmineTaskId() {
             if (!btn)
                 throw new Error('Не удалось получить кнопку "Сохранить"');
             if (btn[1]) {
-                return btn[1].click();
+                //return btn[1].click();
             }
-            return btn[0].click();
+            //return btn[0].click();
         }
     });
 }
@@ -362,7 +368,7 @@ chrome.extension.onMessage.addListener(
     function (request, sender, send_response) {
         if (request.action === "editHPSMTask" && isHPSMUrl()) {
             try {
-                setRedmineTaskId();
+                return setRedmineTaskId();
             } catch (e) {
                 console.log('Ошибка ' + e.name + ":" + e.message + "\n" + e.stack);
             }

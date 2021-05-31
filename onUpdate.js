@@ -1,10 +1,7 @@
 function showRedmineUrl() {
 
     var timeout = setTimeout(function () {
-        if (location.href.indexOf('sm.eaist.mos') === -1
-            && location.href.indexOf('sm.mos') === -1
-            && location.href.indexOf('sm.tender.mos') === -1
-            && location.href.indexOf('212.11.152.7') === -1) {
+        if (!isHPSMUrl()) {
             clearTimeout(timeout);
             return;
         }
