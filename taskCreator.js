@@ -350,9 +350,9 @@ function setRedmineTaskId() {
             if (!btn)
                 throw new Error('Не удалось получить кнопку "Сохранить"');
             if (btn[1]) {
-                //return btn[1].click();
+                return btn[1].click();
             }
-            //return btn[0].click();
+            return btn[0].click();
         }
     });
 }
