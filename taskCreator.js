@@ -10,7 +10,7 @@ function parseTaskFromHPSM() {
     //заголовок
     var title = form.find('input[name="instance/title"]').val()
         || form.find('input[name="instance/brief.description"]').val()
-        || '';
+        || 'Ошибка';
     title = ucFirst(title);
     //контактное лицо
     var contact = form.find('input[alias="instance/contact.name"]').val()
@@ -86,6 +86,23 @@ function parseTaskFromHPSM() {
     });
 }
 
+function addFilesFromOldHPSMToMessage() {
+    wait(() => getActiveFormByHPSM().find('#X405').contents().find('.listTable a').length)
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                var files = getActiveFormByHPSM().find('#X405').contents().find('.listTable a');
+                if (!files.length) {
+                    return reject();
+                }
+                files.each((i, file) => {
+                    $(file).attr('download', '');
+                    setTimeout(() => file.click() && $(file).removeAttr('download'), 500 * i);
+                });
+                return resolve();
+            });
+        })
+}
+
 //инциденты
 function addFilesFromFirstTabToMessage() {
     return new Promise((resolve, reject) => {
@@ -149,11 +166,6 @@ function addFilesFromSecondTabToMessage() {
 //парсит файлы и добавляет к сообщению
 function addFilesToMessage(message) {
     return new Promise((resolve, reject) => {
-        //если это старый hpsm то не скачиваем вложения
-        if (isOldHPSM()) {
-            resolve(message);
-        }
-
         var form = getActiveFormByHPSM();
 
         //если вложений нет, выходим
@@ -163,11 +175,16 @@ function addFilesToMessage(message) {
 
         form.find('a:contains("Вложения (")')[0].click();
 
-        wait(() => getActiveFormByHPSM().find('a:contains("Вложения инцидента")').length)
-            .then(() => addFilesFromFirstTabToMessage())
-            .then(resolve => addFilesFromSecondTabToMessage(), reject => addFilesFromSecondTabToMessage())
+        if (isOldHPSM()) {
+            wait(() => getActiveFormByHPSM().find('#X405Border').length)
+            .then(() => addFilesFromOldHPSMToMessage())
             .then(() => resolve(message));
-
+        } else {
+            wait(() => getActiveFormByHPSM().find('a:contains("Вложения инцидента")').length)
+                .then(() => addFilesFromFirstTabToMessage())
+                .then(resolve => addFilesFromSecondTabToMessage(), reject => addFilesFromSecondTabToMessage())
+                .then(() => resolve(message));
+        }
     });
 }
 
@@ -308,7 +325,7 @@ function createTask(message) {
  */
 function send(message) {
     if (!message) {
-        console.error('Попытка передачи пустый данных');
+        console.error('Попытка передачи пустых данных');
         return false;
     }
     chrome.storage.local.set({message: message});
