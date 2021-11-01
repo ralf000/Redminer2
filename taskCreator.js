@@ -48,11 +48,13 @@ function parseTaskFromHPSM() {
         || '';
 
     var company = form.find('input[alias="instance/company.full.name"]').val() || '';
-    if (company) company = '*Имя компании*: ' + ucFirst(company) + "\n";
+    if (company) company = '*Имя компании*: ' + ucFirst(company.trim()) + "\n";
     var companyInn = form.find('input[alias="instance/company"]').val() || '';
-    if (companyInn) companyInn = '*ИНН компании*: ' + companyInn + "\n";
+    if (companyInn) companyInn = '*ИНН компании*: ' + companyInn.trim() + "\n";
     var companyKpp = form.find('input[name="instance/company.kpp"]').val() || '';
-    if (companyKpp) companyKpp = '*КПП компании*: ' + companyKpp + "\n";
+    if (companyKpp) companyKpp = '*КПП компании*: ' + companyKpp.trim() + "\n";
+    var region = form.find('input[alias="instance/company.region.okato"]').val() || form.find('#X42Readonly').val() || '';
+    if (region) region = '*Регион*: ' + region.trim() + "\n";
 
     var links = '';
     $.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function (index, fieldNum) {
@@ -70,8 +72,8 @@ function parseTaskFromHPSM() {
     if (contact || email) {
         additionalInfo += "\n\n" + contact + email;
     }
-    if (company || companyInn || companyKpp || links) {
-        additionalInfo += "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
+    if (company || companyInn || companyKpp || region || links) {
+        additionalInfo += "\n\n" + company + companyInn + companyKpp + region + links + createdFromIncidentId
     }
 
     return new Promise(function (resolve, reject) {
