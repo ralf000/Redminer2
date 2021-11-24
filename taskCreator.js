@@ -89,10 +89,10 @@ function parseTaskFromHPSM() {
 }
 
 function addFilesFromOldHPSMToMessage() {
-    wait(() => getActiveFormByHPSM().find('#X405').contents().find('.listTable a').length)
+    wait(() => getActiveFormByHPSM().find('label:contains("Информация о вложениях")').closest('.Frame').find('iframe').contents().find('.listTable a').length)
         .then(() => {
             return new Promise((resolve, reject) => {
-                var files = getActiveFormByHPSM().find('#X405').contents().find('.listTable a');
+                var files = getActiveFormByHPSM().find('label:contains("Информация о вложениях")').closest('.Frame').find('iframe').contents().find('.listTable a');
                 if (!files.length) {
                     return reject();
                 }
@@ -178,7 +178,7 @@ function addFilesToMessage(message) {
         form.find('a:contains("Вложения (")')[0].click();
 
         if (isOldHPSM()) {
-            wait(() => getActiveFormByHPSM().find('#X405Border').length)
+            wait(() => getActiveFormByHPSM().find('label:contains("Информация о вложениях")').length)
             .then(() => addFilesFromOldHPSMToMessage())
             .then(() => resolve(message));
         } else {
