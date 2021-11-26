@@ -25,13 +25,15 @@ function parseTaskFromHPSM() {
         email = '*E-mail контактного лица*: ' + email + "\n";
     }
     //предельный срок
-    var period = form.find('span[ref="instance/next.ola.breach"]').children('span').text()
-        || form.find('input[name="instance/next.ola.breach"]').val()
-        || form.find('input[name="instance/hpc.next.breach"]').val();
+    if (isOldHPSM()) {
+        var period = form.find('input[name="instance/hpc.time.registred"]').val();
+    } else {
+        var period = form.find('span[ref="instance/next.ola.breach"]').children('span').text()
+            || form.find('input[name="instance/next.ola.breach"]').val()
+            || form.find('input[name="instance/hpc.next.breach"]').val();
+    }
     if (period) {
-        let separator = period.match(/\//) ? '/' : '.';
-        period = period.split(' ')[0];
-        period = period.split(separator);
+        period = handlePeriod(period);
     }
     //приоритет
     var priority = form.find('span[ref="instance/priority.code"]').children('span').text()
@@ -256,6 +258,21 @@ function getNotSaveVar(callback) {
     });
 }
 
+function handlePeriod(period) {
+    let separator = period.match(/\//) ? '/' : '.';
+    period = period.split(' ')[0];
+    period = period.split(separator);
+    period = new Date('20' + period[2], period[1] - 1, period[0]);
+    let date = isOldHPSM() ? period.getDate() + 1 : period.getDate() - 1;
+    period.setDate(date);
+    let year = period.getFullYear();
+    let month = period.getMonth() + 1;
+    month = ('0' + month).slice(-2);
+    let day = period.getDate();
+    day = ('0' + day).slice(-2);
+    return year + '-' + month + '-' + day;
+}
+
 /**
  * Заполняет поля и создает новую задачу в redmine
  * @param message object
@@ -265,14 +282,7 @@ function createTask(message) {
     var title = message.taskId ? message.taskId + '. ' + message.title : message.title;
     $('input#issue_subject').val(title);
     if (message.period) {
-        let period = new Date('20' + message.period[2], message.period[1] - 1, message.period[0]);
-        period.setDate(period.getDate() - 1);
-        let year = period.getFullYear();
-        let month = period.getMonth() + 1;
-        month = ('0' + month).slice(-2);
-        let day = period.getDate();
-        day = ('0' + day).slice(-2);
-        $('input#issue_due_date').val(year + '-' + month + '-' + day);
+        $('input#issue_due_date').val(message.period);
     }
     if (message.priority) {
         var rmPriority = 2;
