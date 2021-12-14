@@ -55,8 +55,7 @@ function parseTaskFromHPSM() {
     if (companyInn) companyInn = '*ИНН компании*: ' + companyInn.trim() + "\n";
     var companyKpp = form.find('input[name="instance/company.kpp"]').val() || '';
     if (companyKpp) companyKpp = '*КПП компании*: ' + companyKpp.trim() + "\n";
-    var region = form.find('input[alias="instance/company.region.okato"]').val() || form.find('#X42Readonly').val() || '';
-    if (region) region = '*Регион*: ' + region.trim() + "\n";
+    var region = form.find('input[alias="instance/company.region.okato"]').val().trim() || form.find('#X42Readonly').val().trim() || '';
 
     var links = '';
     $.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function (index, fieldNum) {
@@ -75,7 +74,7 @@ function parseTaskFromHPSM() {
         additionalInfo += "\n\n" + contact + email;
     }
     if (company || companyInn || companyKpp || region || links) {
-        additionalInfo += "\n\n" + company + companyInn + companyKpp + region + links + createdFromIncidentId
+        additionalInfo += "\n\n" + company + companyInn + companyKpp + links + createdFromIncidentId
     }
 
     return new Promise(function (resolve, reject) {
@@ -85,7 +84,8 @@ function parseTaskFromHPSM() {
             email: email,
             period: period,
             priority: priority,
-            body: body + additionalInfo
+            body: body + additionalInfo,
+            region: region,
         })
     });
 }
@@ -292,6 +292,12 @@ function createTask(message) {
             rmPriority = 5;
         }
         $('select#issue_priority_id option[value=' + rmPriority + ']').prop('selected', true);
+    }
+    if (message.region) {
+        let regionInput = $('label:contains("Регион")').length ? $('label:contains("Регион")').next('input') : $('input#issue_custom_field_values_17');
+        if (regionInput.length) {
+            regionInput.val(message.region);
+        }
     }
 
     $('textarea#issue_description').val(message.body);
