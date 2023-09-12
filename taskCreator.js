@@ -55,7 +55,12 @@ function parseTaskFromHPSM() {
     if (companyInn) companyInn = '*ИНН компании*: ' + companyInn.trim() + "\n";
     var companyKpp = form.find('input[name="instance/company.kpp"]').val() || '';
     if (companyKpp) companyKpp = '*КПП компании*: ' + companyKpp.trim() + "\n";
-    var region = form.find('input[alias="instance/company.region.okato"]').val().trim() || form.find('#X42Readonly').val().trim() || '';
+    var region = '';
+    if (form.find('input[alias="instance/company.region.okato"]').length) {
+        region = form.find('input[alias="instance/company.region.okato"]').val().trim();
+    } else if (form.find('#X42Readonly').length) {
+        region = form.find('#X42Readonly').val().trim();
+    }
 
     var links = '';
     $.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function (index, fieldNum) {
