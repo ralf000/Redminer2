@@ -1,26 +1,22 @@
 function init() {
     var block = $('#projects');
     var url = 'projects.json';
-    var btn;
 
     saveCurrentTab();
 
-    $.getJSON(url, function (data, status, jqXHR) {
-        if (status === 'success') {
-            for (var key in data) {
-                btn = block.append('<button class="btn btn-block ' + data[key].btn + ' ' + data[key].link + ' not-save" id="' + data[key].link + '">' + data[key].name + '</button>');
-            }
-            for (key in data) {
-                $('.' + data[key].link).on('click', function () {
-                    if ($(this).hasClass('not-save'))
-                        chrome.storage.local.set({notSave: 'on'});
-                    else
-                        chrome.storage.local.set({notSave: 'off'});
+    $.getJSON(url, function (data, status) {
+        if (status !== 'success') return false;
+        for (let key in data) {
+            block.append('<button class="btn btn-block ' + data[key].btn + ' ' + data[key].id + ' not-save" id="' + data[key].id + '">' + data[key].name + '</button>');
+            $('.' + data[key].id).on('click', function () {
+                if ($(this).hasClass('not-save'))
+                    chrome.storage.local.set({notSave: 'on'});
+                else
+                    chrome.storage.local.set({notSave: 'off'});
 
-                    chrome.storage.local.set({project: $(this).attr('id')});
-                    chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
-                });
-            }
+                chrome.storage.local.set({project: data[key]});
+                chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
+            });
         }
     });
 }

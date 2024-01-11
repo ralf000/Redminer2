@@ -5,7 +5,7 @@ function getTaskData() {
     chrome.storage.local.get('message', function (result) {
         var message = result.message;
         if (message.title) {
-            getProjectId();
+            getProject(createTabForNewTask);
         }
     });
 }
@@ -39,23 +39,18 @@ function getRedmineTabIdAndRunScript() {
 }
 
 /**
- * получает id проекта для создания задачи в этом проекте
+ * получает данные проекта
  */
-function getProjectId() {
-    chrome.storage.local.get('project', function (result) {
-        var project = result.project;
-        if (project) {
-            createTabForNewTask(project);
-        }
-    });
+function getProject(callback) {
+    chrome.storage.local.get('project', ({project}) => callback(project));
 }
 
 /**
  * создает новую вкладку в redmine для создания новой задачи
  */
-function createTabForNewTask(projectId) {
+function createTabForNewTask(project) {
     chrome.tabs.create({
-        url: "https://rmine.net/projects/" + projectId + "/issues/new"
+        url: `https://rmine.net/projects/${project.id}/issues/new`
     }, function (tab) {
         var numCurTab = tab.id;
 
@@ -64,7 +59,6 @@ function createTabForNewTask(projectId) {
 
         chrome.tabs.executeScript(null, {file: 'taskCreator.js'});
     });
-    chrome.storage.local.remove('project');
 }
 
 /**

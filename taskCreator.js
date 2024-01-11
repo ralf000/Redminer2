@@ -248,7 +248,7 @@ function getTaskData() {
     chrome.storage.local.get('message', function (result) {
         var message = result.message;
         if (message && message.title) {
-            createTask(message);
+            getProject((project) => createTask(project, message))
         }
     });
 }
@@ -278,12 +278,53 @@ function handlePeriod(period) {
     return year + '-' + month + '-' + day;
 }
 
+function setProject(project) {
+    return new Promise(resolve => {
+        const projectSelect = $('select#issue_project_id');
+        const delay = project.redmine_project ? 500 : 0;
+        if (projectSelect.length && project.redmine_project) {
+            const option = projectSelect.find(`option[value=${project.redmine_project}]`);
+            if (option.length) {
+                option.attr('selected', 'selected').click();
+                //сработало только так
+                projectSelect[0].dispatchEvent(new Event('change'));
+            }
+        }
+        setTimeout(resolve, delay);
+    });
+}
+
+function setTracker(project) {
+    return new Promise(resolve => {
+        const trackerSelect = $('select#issue_tracker_id');
+        const supportTracker = trackerSelect.find('option:contains("Поддержка")');
+        const delay = project.redmine_tracker || supportTracker ? 500 : 0;
+        if (trackerSelect.length && project.redmine_tracker) {
+            const option = trackerSelect.find(`option[value=${project.redmine_tracker}]`);
+            if (option.length) {
+                option.attr('selected', 'selected').click();
+                //сработало только так
+                trackerSelect[0].dispatchEvent(new Event('change'));
+            }
+        } else {
+            const option = trackerSelect.find('option:contains("Поддержка")');
+            if (option.length) {
+                option.attr('selected', 'selected').change().click();
+            }
+        }
+        setTimeout(resolve, delay);
+    });
+}
+
 /**
  * Заполняет поля и создает новую задачу в redmine
+ * @param project object
  * @param message object
  */
-function createTask(message) {
-    $('select#issue_tracker_id option:contains("Поддержка")').attr('selected', 'selected').change().click();
+async function createTask(project, message) {
+    await setProject(project);
+    await setTracker(project);
+
     var title = message.taskId ? message.taskId + '. ' + message.title : message.title;
     $('input#issue_subject').val(title);
     if (message.period) {

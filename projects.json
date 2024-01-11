@@ -1,67 +1,69 @@
 {
   "uidtek": {
     "name": "АИС УИД 2024-2025",
-    "link": "uid24",
+    "redmine_project": 657,
+    "redmine_tracker": 3,
+    "id": "uid24",
     "btn": "btn-danger"
   },
   "ksp": {
     "name": "КСП",
-    "link": "ksp",
+    "id": "ksp",
     "btn": "btn-primary"
   },
   "iasksp": {
     "name": "Поддержка ИАС КСП-М",
-    "link": "iasksp",
+    "id": "iasksp",
     "btn": "btn-primary"
   },
   "2016_esz_uptime24": {
     "name": "2016 ЕСЗ Техподдержка",
-    "link": "2016_esz_uptime24",
+    "id": "2016_esz_uptime24",
     "btn": "btn-primary"
   },
   "aisdo": {
     "name": "АИС Детский отдых",
-    "link": "aisdo",
+    "id": "aisdo",
     "btn": "btn-primary"
   },
   "aisdo_start": {
     "name": "Внедрение и эксплуатация",
-    "link": "aisdo_start",
+    "id": "aisdo_start",
     "btn": "btn-primary"
   },
   "erp": {
     "name": "ERP Мосготур",
-    "link": "erp",
+    "id": "erp",
     "btn": "btn-success"
   },
   "poekhalideti": {
     "name": "Поехали дети",
-    "link": "poekhalideti",
+    "id": "poekhalideti",
     "btn": "btn-success"
   },
   "mgtsite_2022-2023": {
     "name": "Сайт МГТ 2021-2022",
-    "link": "mgtportal_2023-2024",
+    "id": "mgtportal_2023-2024",
     "btn": "btn-success"
   },
   "pp3": {
     "name": "Портал поставщиков 3.0",
-    "link": "pp3",
+    "id": "pp3",
     "btn": "btn-warning"
   },
   "tickets-pp20": {
     "name": "Тикеты пп.2.0",
-    "link": "tickets-pp20",
+    "id": "tickets-pp20",
     "btn": "btn-warning"
   },
   "hpsm-2021-2023": {
     "name": "Обращения и инциденты HPSM 2024-2026",
-    "link": "hpsm-2024-2026",
+    "id": "hpsm-2024-2026",
     "btn": "btn-dark fs-12"
   },
   "noproject": {
     "name": "Внепроектная деятельность",
-    "link": "noproject",
+    "id": "noproject",
     "btn": "btn-default"
   }
 }

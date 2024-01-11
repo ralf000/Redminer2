@@ -68,6 +68,13 @@ function getActiveFormByHPSM() {
         : frame.contents().find('iframe.ux-mif').contents().find('form#topaz');
 }
 
+/**
+ * получает данные проекта
+ */
+function getProject(callback) {
+    chrome.storage.local.get('project', ({project}) => callback(project));
+}
+
 function isHPSMUrl() {
     return location.href.indexOf('sm.eaist.mos') !== -1
         || location.href.indexOf('sm.mos') !== -1
