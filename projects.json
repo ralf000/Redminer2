@@ -61,6 +61,11 @@
     "id": "hpsm-2024-2026",
     "btn": "btn-dark fs-12"
   },
+  "hr-2024": {
+    "name": "HR Киоск 2024",
+    "id": "hr-2024",
+    "btn": "btn-default"
+  },
   "noproject": {
     "name": "Внепроектная деятельность",
     "id": "noproject",
