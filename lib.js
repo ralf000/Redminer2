@@ -82,6 +82,10 @@ function isHPSMUrl() {
         || location.href.indexOf('212.11.152.7') !== -1;
 }
 
+function is4meUrl() {
+    return location.href.indexOf('4me.mos.ru') !== -1
+}
+
 function isOldHPSM() {
     return location.href.indexOf('sm.mos') !== -1
 }

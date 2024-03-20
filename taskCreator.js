@@ -95,6 +95,46 @@ function parseTaskFromHPSM() {
     });
 }
 
+function getHeaderInfoFrom4me(name) {
+    return $(`.header_bar_label:contains('${name}')`).closest('.header_bar_section').find('.data').text().trim();
+}
+
+function getSectionDataFrom4me(name) {
+    return $.unique($(`.section-title:contains('${name}')`).closest('.section').find('.more_section > .row').find('*').map((i, el) => el.textContent.trim()).toArray()).join('\n').replaceAll('  ', '')
+}
+
+function getDataByTitleAttrFrom4me(name) {
+    return $.unique($(`[title='${name}']`).closest('.row').find('*').map((i, el) => el.textContent.trim()).toArray()).join('\n');
+}
+
+function getBodyFrom4me() {
+    return $('.paging-collection').first().find('.list li').first().find('.email-fragment').text().trim();
+}
+
+function parseTaskFrom4me() {
+    let taskId = getHeaderInfoFrom4me('Запрос #');
+    let title = $('.title').find('[dir="ltr"]').text();
+    let body = getBodyFrom4me();
+    let category = `*Категория*\n` + getHeaderInfoFrom4me('Категория');
+    let influence = `*Влияние*\n` + getHeaderInfoFrom4me('Влияние');
+    let purpose = `*Назначение*\n` + getSectionDataFrom4me('Назначение');
+    let initiator = getDataByTitleAttrFrom4me('Инициатор');
+    let serviceComponent = getDataByTitleAttrFrom4me('Компонент услуги');
+    let additionalInfo = [category, influence, purpose, initiator, serviceComponent].join('\n\n')
+
+    return new Promise(function (resolve, reject) {
+        resolve({
+            taskId: taskId ? taskId : '',
+            title: title,
+            // email: email,
+            // period: period,
+            // priority: priority,
+            body: additionalInfo + '\n\n' + body,
+            // region: region,
+        })
+    });
+}
+
 function addFilesFromOldHPSMToMessage() {
     wait(() => getActiveFormByHPSM().find('label:contains("Информация о вложениях")').closest('.Frame').find('iframe').contents().find('.listTable a').length)
         .then(() => {
@@ -173,7 +213,7 @@ function addFilesFromSecondTabToMessage() {
 }
 
 //парсит файлы и добавляет к сообщению
-function addFilesToMessage(message) {
+function addFilesFromHPSMToMessage(message) {
     return new Promise((resolve, reject) => {
         var form = getActiveFormByHPSM();
 
@@ -347,7 +387,7 @@ async function createTask(project, message) {
     }
 
     $('textarea#issue_description').val(message.body);
-    $('input#issue_estimated_hours').val(1);
+    //$('input#issue_estimated_hours').val(1);
     $('select#issue_assigned_to_id option:contains("<< мне >>")').attr('selected', 'selected');
 
     $('#attributes').append('<div class="splitcontent">\n\
@@ -462,7 +502,10 @@ if (isOutlookUrl()) {
         .then(message => send(message));
 } else if (isHPSMUrl()) {
     parseTaskFromHPSM()
-        .then(message => addFilesToMessage(message))
+        .then(message => addFilesFromHPSMToMessage(message))
+        .then(message => send(message));
+} else if (is4meUrl()) {
+    parseTaskFrom4me()
         .then(message => send(message));
 } else if (isRedmineUrl()) {
     if (checkRedmineUrlTask()) {

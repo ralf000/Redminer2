@@ -10,7 +10,8 @@
                 "https://212.11.152.7/*",
                 "https://sm.eaist.mos.ru/*",
                 "https://sm.tender.mos.ru/*",
-                "https://sm.mos.ru/*/*"
+                "https://sm.mos.ru/*/*",
+                "https://sc-tech-solutions.4me.mos.ru/*"
                 ],
             "js": ["jquery.min.js", "lib.js"],
             "css": ["style.css"],
@@ -28,7 +29,8 @@
         "https://212.11.152.7/*",
         "https://sm.eaist.mos.ru/*",
         "https://sm.tender.mos.ru/*",
-        "https://sm.mos.ru/*/*"
+        "https://sm.mos.ru/*/*",
+        "https://sc-tech-solutions.4me.mos.ru/*"
         ],
     "browser_action": {
         "default_title": "Redminer2",
