@@ -108,29 +108,40 @@ function getDataByTitleAttrFrom4me(name) {
 }
 
 function getBodyFrom4me() {
-    return $('.paging-collection').first().find('.list li').first().find('.email-fragment').text().trim();
+    let body = $('.paging-collection').first().find('.list li').first().find('.email-fragment').text().trim().split('\n').filter(el => el);
+    let startPoint = 0;
+    let stop = false;
+    ['Cc:', 'To:', 'Subject:'].forEach(needed => {
+        let result = body.findIndex(el => el.indexOf(needed) === 0);
+        if (!stop && result !== -1) {
+            startPoint = result + 1;
+            stop = true;
+        }
+    });
+    body = body.slice(startPoint).join('\n');
+
+    let addBody = $('.email-hidden-reply').first().find('.email-quoted-reply').text().trim().split('\n').filter(el => el);
+    let filteredPhrases = ['Cc:', 'To:', 'Subject:', 'Sent:', 'ВНЕШНЯЯ ПОЧТА:', 'не запускайте вложения и сообщите'];
+    addBody = addBody.filter(el => !filteredPhrases.map(needed => el.indexOf(needed) === 0).reduce((result, item) => item || result)).join('\n');
+    return body + '\n\n' + addBody;
 }
 
 function parseTaskFrom4me() {
     let taskId = getHeaderInfoFrom4me('Запрос #');
     let title = $('.title').find('[dir="ltr"]').text();
     let body = getBodyFrom4me();
-    let category = `*Категория*\n` + getHeaderInfoFrom4me('Категория');
+    /*let category = `*Категория*\n` + getHeaderInfoFrom4me('Категория');
     let influence = `*Влияние*\n` + getHeaderInfoFrom4me('Влияние');
     let purpose = `*Назначение*\n` + getSectionDataFrom4me('Назначение');
     let initiator = getDataByTitleAttrFrom4me('Инициатор');
     let serviceComponent = getDataByTitleAttrFrom4me('Компонент услуги');
-    let additionalInfo = [category, influence, purpose, initiator, serviceComponent].join('\n\n')
+    let additionalInfo = [category, influence, purpose, initiator, serviceComponent].join('\n\n');*/
 
-    return new Promise(function (resolve, reject) {
+    return new Promise(resolve => {
         resolve({
             taskId: taskId ? taskId : '',
             title: title,
-            // email: email,
-            // period: period,
-            // priority: priority,
-            body: additionalInfo + '\n\n' + body,
-            // region: region,
+            body: body,
         })
     });
 }
@@ -235,6 +246,19 @@ function addFilesFromHPSMToMessage(message) {
                 .then(() => resolve(message));
         }
     });
+}
+
+//парсит файлы и добавляет к сообщению
+function addFilesFrom4meToMessage(message) {
+    return Promise.all(
+        $('.attachment-info a').map((i, file) => {
+            return new Promise(resolve => setTimeout(() => {
+                $(file).attr('download', '');
+                file.click();
+                resolve();
+            }, 100 * i))
+        }).toArray()
+    ).then(() => new Promise(resolve => resolve(message)))
 }
 
 function isOldOutlook() {
@@ -506,6 +530,7 @@ if (isOutlookUrl()) {
         .then(message => send(message));
 } else if (is4meUrl()) {
     parseTaskFrom4me()
+        .then(message => addFilesFrom4meToMessage(message))
         .then(message => send(message));
 } else if (isRedmineUrl()) {
     if (checkRedmineUrlTask()) {
