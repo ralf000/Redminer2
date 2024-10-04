@@ -281,7 +281,7 @@ function parseTaskFromNewOutlook() {
     var title = bodyBlock.children().first().find('span').first().text().trim();
     var textDivs = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
     if (!textDivs.length) {
-        textDivs = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
+        textDivs = $('.wide-content-host .allowTextSelection > div > div > div').children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
     }
     var text = textDivs.map((i, div) => $(div).text().trim());
     if (text.length) {

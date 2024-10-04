@@ -36,11 +36,6 @@
     "id": "erp",
     "btn": "btn-success"
   },
-  "poekhalideti": {
-    "name": "Поехали дети",
-    "id": "poekhalideti",
-    "btn": "btn-success"
-  },
   "mgtsite_2022-2023": {
     "name": "Сайт МГТ 2021-2022",
     "id": "mgtportal_2023-2024",
@@ -64,7 +59,12 @@
   "hr-2024": {
     "name": "HR Киоск 2024",
     "id": "hr-2024",
-    "btn": "btn-default"
+    "btn": "btn-danger"
+  },
+  "ebs-hpsm-2024-2025": {
+    "name": "ЕБС 2024-2025",
+    "id": "hr-2024",
+    "btn": "btn-info"
   },
   "noproject": {
     "name": "Внепроектная деятельность",
