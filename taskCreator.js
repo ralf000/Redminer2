@@ -185,7 +185,7 @@ function addFilesFromFirstTabToMessage() {
                 })).then(urls => {
                     urls = urls.slice(0, 30);
                     console.log(urls);
-                    chrome.extension.sendMessage({files: urls});
+                    chrome.runtime.sendMessage({files: urls});
                     resolve();
                 });*/
 
@@ -216,7 +216,7 @@ function addFilesFromSecondTabToMessage() {
                     return location.origin + '/' + location.pathname.split('/')[1] + '/servlet/' + file.attr('href');
                 })).then(urls => {
                     urls = urls.slice(0, 30);
-                    chrome.extension.sendMessage({files: urls});
+                    chrome.runtime.sendMessage({files: urls});
                     resolve();
                 });
             });
@@ -277,13 +277,13 @@ function parseTaskFromOldOutlook() {
 }
 
 function parseTaskFromNewOutlook() {
-    var bodyBlock = $('[role=main]');
-    var title = bodyBlock.children().first().find('span').first().text().trim();
-    var textDivs = $('.wide-content-host').find('.allowTextSelection').eq(1).children().children().children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
+    let bodyBlock = $('[role=main]');
+    let title = bodyBlock.children().first().find('span').first().text().trim();
+    let textDivs = $('.wide-content-host .allowTextSelection > div > div > div').children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
     if (!textDivs.length) {
         textDivs = $('.wide-content-host .allowTextSelection > div > div > div').children().children().filter((i, el) => $(el).attr('id') !== 'x_Signature' && $(el).attr('id') !== 'x_divtagdefaultwrapper' && !$(el).find('#x_divtagdefaultwrapper').length && !$(el).find('#x_Signature').length && !$(el).find('#x_x_Signature').length);
     }
-    var text = textDivs.map((i, div) => $(div).text().trim());
+    let text = textDivs.map((i, div) => $(div).text().trim());
     if (text.length) {
         text = text.toArray().join('\n').replaceAll(/(\n){2,}/g, "\n");
     }
@@ -309,20 +309,10 @@ function parseTaskFromOutlook() {
  * Получает объект с данными задачи, проверяет установлен ли заголовок
  */
 function getTaskData() {
-    chrome.storage.local.get('message', function (result) {
+    chrome.storage.sync.get('message', function (result) {
         var message = result.message;
         if (message && message.title) {
             getProject((project) => createTask(project, message))
-        }
-    });
-}
-
-function getNotSaveVar(callback) {
-    chrome.storage.local.get('notSave', function (result) {
-        var notSave = result.notSave;
-        if (notSave === 'off') {
-            chrome.storage.local.remove('notSave');
-            callback();
         }
     });
 }
@@ -421,29 +411,16 @@ async function createTask(project, message) {
             </div>\n\
             </div>');
     $('input#issue_custom_field_values_11').val(message.taskId ? message.taskId : '');
-    chrome.storage.local.remove('message');
-
-    //если скачивались файлы то нажимаем "выбрать файлы"
-    /*chrome.storage.local.get('hasFiles', function (result) {
-        var hasFiles = result.hasFiles;
-        if (hasFiles === true) {
-            chrome.storage.local.remove('hasFiles');
-            $('[name="attachments[dummy][file]"]').click();
-        }
-    });*/
+    chrome.storage.sync.remove('message');
 
     //если таск из hpsm, то переменная firstTab не пустая
-    chrome.storage.local.get('firstTab', function (result) {
+    chrome.storage.sync.get('firstTab', function (result) {
         var firstTab = result.firstTab;
         if (firstTab) {
-            chrome.extension.sendMessage({getRedmineTaskId: "on"});
+            chrome.runtime.sendMessage({getRedmineTaskId: "on"});
         } else {
             clean();
         }
-        //если переменная notSave в true то сохранять таск не нужно
-        getNotSaveVar(function () {
-            $('input[type=submit]')[0].click();
-        });
     });
 }
 
@@ -456,20 +433,20 @@ function send(message) {
         console.error('Попытка передачи пустых данных');
         return false;
     }
-    chrome.storage.local.set({message: message});
-    chrome.extension.sendMessage({create: "on"});
+    chrome.storage.sync.set({message: message});
+    chrome.runtime.sendMessage({create: "on"});
 }
 
 function clean() {
-    chrome.storage.local.remove('firstTab');
-    chrome.storage.local.remove('project');
-    chrome.storage.local.remove('redmineTab');
-    chrome.storage.local.remove('redmineUrl');
-    chrome.storage.local.remove('notSave');
+    chrome.storage.sync.remove('firstTab');
+    chrome.storage.sync.remove('project');
+    chrome.storage.sync.remove('redmineTab');
+    chrome.storage.sync.remove('redmineUrl');
+    chrome.storage.sync.remove('notSave');
 }
 
 function setRedmineTaskId() {
-    chrome.storage.local.get('redmineUrl', function (result) {
+    chrome.storage.sync.get('redmineUrl', function (result) {
         var redmineUrl = result.redmineUrl;
         if (redmineUrl) {
             clean();
@@ -509,7 +486,7 @@ function checkRedmineUrlTask() {
 /**
  * получает сообщения из background.js
  */
-chrome.extension.onMessage.addListener(
+chrome.runtime.onMessage.addListener(
     function (request, sender, send_response) {
         if (request.action === "editHPSMTask" && isHPSMUrl()) {
             try {
@@ -535,9 +512,9 @@ if (isOutlookUrl()) {
 } else if (isRedmineUrl()) {
     if (checkRedmineUrlTask()) {
         //сохраняем ссылку на задачу в redmine
-        chrome.storage.local.set({redmineUrl: location.href});
+        chrome.storage.sync.set({redmineUrl: location.href});
         //можно переходить обратно в hpsm
-        chrome.extension.sendMessage({return: "on"});
+        chrome.runtime.sendMessage({return: "on"});
     } else {
         getTaskData();
     }

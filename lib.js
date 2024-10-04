@@ -72,7 +72,7 @@ function getActiveFormByHPSM() {
  * получает данные проекта
  */
 function getProject(callback) {
-    chrome.storage.local.get('project', ({project}) => callback(project));
+    chrome.storage.sync.get('project', ({project}) => callback(project));
 }
 
 function isHPSMUrl() {

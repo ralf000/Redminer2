@@ -1,44 +1,92 @@
 {
-    "name": "Redminer2",
-    "description": "Автоматизатор создания задач",
-    "version": "1",
-    "content_scripts": [{
-            "matches": [
-                "https://rmine.net/*/*",
-                "https://outlook.office.com/*/*",
-                "https://outlook.office365.com/*/*",
-                "https://212.11.152.7/*",
-                "https://sm.eaist.mos.ru/*",
-                "https://sm.tender.mos.ru/*",
-                "https://sm.mos.ru/*/*",
-                "https://sc-tech-solutions.4me.mos.ru/*"
-                ],
-            "js": ["jquery.min.js", "lib.js"],
-            "css": ["style.css"],
-            "run_at": "document_start"
-        }],
-    "permissions": [
-        "storage",
-        "unlimitedStorage",
-        "downloads",
-        "background",
-        "file://*",
-        "https://rmine.net/*/*",
-        "https://outlook.office.com/*/*",
-        "https://outlook.office365.com/*/*",
+  "name": "Redminer",
+  "description": "Автоматизатор создания задач",
+  "version": "2",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://rmine.net/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*",
         "https://212.11.152.7/*",
         "https://sm.eaist.mos.ru/*",
         "https://sm.tender.mos.ru/*",
-        "https://sm.mos.ru/*/*",
-        "https://sc-tech-solutions.4me.mos.ru/*"
-        ],
-    "browser_action": {
-        "default_title": "Redminer2",
-        "default_icon": "icon.png",
-        "default_popup": "popup.html"
-    },
-    "manifest_version": 2,
-    "background": {
-        "scripts": ["background.js", "lib.js"]
+        "https://sm.mos.ru/*",
+        "https://sc-tech-solutions.4me.mos.ru/*",
+        "https://*.4me.mos.ru/*"
+      ],
+      "js": [
+        "jquery.min.js",
+        "lib.js"
+      ],
+      "css": [
+        "style.css"
+      ],
+      "run_at": "document_start"
     }
+  ],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "unlimitedStorage",
+    "downloads",
+    "background"
+  ],
+  "host_permissions": [
+    "https://sc-tech-solutions.4me.mos.ru/*",
+    "https://rmine.net/*",
+    "https://outlook.office.com/*",
+    "https://outlook.office365.com/*",
+    "https://212.11.152.7/*",
+    "https://sm.eaist.mos.ru/*",
+    "https://sm.tender.mos.ru/*",
+    "https://sm.mos.ru/*",
+    "https://sc-tech-solutions.4me.mos.ru/*",
+    "https://*.4me.mos.ru/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "style.css",
+        "jquery.min.js",
+        "lib.js"
+      ],
+      "matches": [
+        "https://sc-tech-solutions.4me.mos.ru/*",
+        "https://rmine.net/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*",
+        "https://sm.eaist.mos.ru/*",
+        "https://sm.tender.mos.ru/*",
+        "https://sm.mos.ru/*",
+        "https://*.4me.mos.ru/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "Redminer",
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "externally_connectable": {
+    "matches": [
+      "https://sc-tech-solutions.4me.mos.ru/*",
+      "https://rmine.net/*",
+      "https://outlook.office.com/*",
+      "https://outlook.office365.com/*",
+      "https://212.11.152.7/*",
+      "https://sm.eaist.mos.ru/*",
+      "https://sm.tender.mos.ru/*",
+      "https://sm.mos.ru/*",
+      "https://sc-tech-solutions.4me.mos.ru/*",
+      "https://*.4me.mos.ru/*"
+    ]
+  }
 }
