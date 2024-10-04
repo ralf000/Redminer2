@@ -63,7 +63,7 @@
   },
   "ebs-hpsm-2024-2025": {
     "name": "ЕБС 2024-2025",
-    "id": "hr-2024",
+    "id": "ebs-hpsm-2024-2025",
     "btn": "btn-info"
   },
   "noproject": {
