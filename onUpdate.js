@@ -1,20 +1,20 @@
 function showRedmineUrl() {
 
-    var timeout = setTimeout(function () {
-        if (!isHPSMUrl()) {
+    let timeout = setTimeout(function () {
+        if (!LIB.isHPSMUrl()) {
             clearTimeout(timeout);
             return;
         }
 
-        var redmineBtn = $('body a#redmine');
+        let redmineBtn = $('body a#redmine');
         if (redmineBtn.length) {
             redmineBtn.remove();
         }
 
-        var form = getActiveFormByHPSM();//lib.js
+        var form = LIB.getActiveFormByHPSM();//lib.js
         var url = '';
         if (form) {
-            if (isNewHPSMUrl()) {
+            if (LIB.isNewHPSMUrl()) {
                 url = form.find('input[name="instance/link.to.system/link.to.system[5]"]').val();
             } else {
                 url = form.find('input[name="instance/hpc.additional.field.2"]').val();
@@ -33,5 +33,5 @@ function showRedmineUrl() {
 try {
     showRedmineUrl();
 } catch (e) {
-    false;
+
 }

@@ -2,27 +2,20 @@
   "name": "Redminer",
   "description": "Автоматизатор создания задач",
   "version": "2",
+  "manifest_version": 3,
   "content_scripts": [
     {
-      "matches": [
-        "https://rmine.net/*",
-        "https://outlook.office.com/*",
-        "https://outlook.office365.com/*",
-        "https://212.11.152.7/*",
-        "https://sm.eaist.mos.ru/*",
-        "https://sm.tender.mos.ru/*",
-        "https://sm.mos.ru/*",
-        "https://sc-tech-solutions.4me.mos.ru/*",
-        "https://*.4me.mos.ru/*"
-      ],
+      "matches": ["<all_urls>"],
+      "run_at": "document_end",
       "js": [
-        "jquery.min.js",
-        "lib.js"
+        "vendors/jquery.min.js",
+        "objects/STORAGE.js",
+        "objects/MESSAGES.js",
+        "objects/LOGGER.js",
+        "objects/LIB.js"
       ],
-      "css": [
-        "style.css"
-      ],
-      "run_at": "document_start"
+      "css": [],
+      "all_frames": true
     }
   ],
   "permissions": [
@@ -34,35 +27,14 @@
     "downloads",
     "background"
   ],
-  "host_permissions": [
-    "https://sc-tech-solutions.4me.mos.ru/*",
-    "https://rmine.net/*",
-    "https://outlook.office.com/*",
-    "https://outlook.office365.com/*",
-    "https://212.11.152.7/*",
-    "https://sm.eaist.mos.ru/*",
-    "https://sm.tender.mos.ru/*",
-    "https://sm.mos.ru/*",
-    "https://sc-tech-solutions.4me.mos.ru/*",
-    "https://*.4me.mos.ru/*"
-  ],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
       "resources": [
         "style.css",
-        "jquery.min.js",
-        "lib.js"
+        "vendors/*"
       ],
-      "matches": [
-        "https://sc-tech-solutions.4me.mos.ru/*",
-        "https://rmine.net/*",
-        "https://outlook.office.com/*",
-        "https://outlook.office365.com/*",
-        "https://sm.eaist.mos.ru/*",
-        "https://sm.tender.mos.ru/*",
-        "https://sm.mos.ru/*",
-        "https://*.4me.mos.ru/*"
-      ]
+      "matches": ["<all_urls>"]
     }
   ],
   "action": {
@@ -70,23 +42,10 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-  "manifest_version": 3,
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
   "externally_connectable": {
-    "matches": [
-      "https://sc-tech-solutions.4me.mos.ru/*",
-      "https://rmine.net/*",
-      "https://outlook.office.com/*",
-      "https://outlook.office365.com/*",
-      "https://212.11.152.7/*",
-      "https://sm.eaist.mos.ru/*",
-      "https://sm.tender.mos.ru/*",
-      "https://sm.mos.ru/*",
-      "https://sc-tech-solutions.4me.mos.ru/*",
-      "https://*.4me.mos.ru/*"
-    ]
-  }
+    "matches": ["<all_urls>"]  }
 }

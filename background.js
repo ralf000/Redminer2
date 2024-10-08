@@ -30,15 +30,11 @@ async function getRedmineTabIdAndRunScript() {
 /**
  * создает новую вкладку в redmine для создания новой задачи
  */
-function createTabForNewTask(project) {
-    chrome.tabs.create({url: `https://rmine.net/projects/${project.id}/issues/new`}, tab => {
-        //сохраняем вкладку redmine
-        setParam({redmineTab: tab.id});
-
-        chrome.scripting.executeScript({
-            target: {tabId: tab.id, allFrames: true},
-            files: ['taskCreator.js'],
-        });
+async function createTabForNewTask(project) {
+    const tab = await chrome.tabs.create({url: `https://rmine.net/projects/${project.id}/issues/new`, active: true});
+    chrome.scripting.executeScript({
+        target: {tabId: tab.id, allFrames: true},
+        files: ['taskCreator.js'],
     });
 }
 
@@ -63,7 +59,7 @@ chrome.runtime.onMessage.addListener(
             if (message.title) {
                 //получает данные проекта
                 const project = await getParam('project');
-                createTabForNewTask(project);
+                await createTabForNewTask(project);
             }
         } else if (getRedmineTaskId === "on") {
             await getRedmineTabIdAndRunScript();
@@ -88,7 +84,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         return false;
     }
     chrome.scripting.executeScript({
-        target: {tabId: null, allFrames: true},
+        target: {tabId: tabId, allFrames: true},
         files: ['onUpdate.js'],
     });
 });
